@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model List<E_commercePro.Models.Cart>
+
+<!-- Shop Cart Section Begin -->
+<head>
+    <style>
+        .shop__cart__table thead th {
+            font-size: 18px;
+            color: #111111;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 5px !important;
+        }
+    </style>
+</head>
+<section class="shop-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shop__cart__table">
+                    <table class="text-center">
+                        <thead style="background-color: #e5aa3b;">
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="cart__product__item text-start ">
+                                        <img width="90px" height="90px" src="" alt="">
+                                        <div class="cart__product__item__title">
+                                            <h6>@item.Product.Name</h6>
+                                            <!-- Add other details as needed -->
+                                        </div>
+                                    </td>
+                                    @if (item.Product.Price != null)
+                                    {
+                                        <td class="cart_price">
+                                            <div class="product__details__price mb-0">@item.Product.Price<span>₹ @item.Product.Price</span></div>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="cart_price">
+                                            <div class="product__details__price mb-0 ">@item.Product.Price</div>
+                                        </td>
+                                    }
+                                    <td style="width: 7rem;" class="cart__quantity ">
+                                        <div class="input-group quantity">
+                                            <button class="btn btn-light dec qtybtn" type="button">-</button>
+                                            <input id="quantity@item.Product.Id" type="text" style="" class="form-control quantity-input border-0 text-center" data-id="@item.Product.Id" value="@item.Quantity" min="1" disabled>
+                                            <button class="btn btn-light inc qtybtn" type="button">+</button>
+                                        </div>
+                                    </td>
+                                    <td id="carttotal@item.Product.Id" class="">
+                                        <div class="product__details__price mb-0 cart_total">@* @item.Total *@</div>
+                                    </td>
+                                    <td class="cart__close deleteCartBut" data-id="@item.Product.Id"><span class="icon_close"></span></td>
+                                </tr>
+                            }
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="5">
+                                        <p class="text-center">Your cart is empty please add items to the cart.</p>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="cart__btn">
+                    <a href="/api/v1/products/list/all">Continue Shopping</a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="cart__btn update__btn">
+                    <a href="/api/v1/users/cart"><span class="icon_loading"></span> Update cart</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="discount__content">
+                    <h6>Apply Coupons</h6>
+                    <form class="w-100 mt-3">
+                        <input id="couponInput" type="text" placeholder="Enter your coupon code">
+                        <button type="button" id="showCouponButton" class="site-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Show available coupons
+                        </button>
+                        <button type="button" class="site-btn d-none" id="removeCouponButton">Remove Coupon</button>
+                    </form>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <!-- Modal content here -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 offset-lg-2">
+                <div class="cart__total__procced">
+                    <h6 class="text-center">Cart total</h6>
+                    <ul>
+                        <li>Subtotal <span id="subtotal">@* @Model.Total *@</span></li>
+                        <li>Total discount <span id="discount">0</span></li>
+                        <li id="total">Total <span id="grandtotal">₹ @* @Model.Total *@</span></li>
+                    </ul>
+                    @if (Model.Any())
+                    {
+                        <form action="/api/v1/users/checkout" method="post">
+                            <input type="hidden" id="couponForProceedToPayment" name="couponCode" value="">
+                            <button type="submit" class="primary-btn border-0 w-100">Proceed to checkout</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    // JavaScript code here
+</script>
+
+
+
+
+
+
+
+

@@ -1,0 +1,126 @@
+﻿@model E_commercePro.Models.Product
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Add New Product</h2>
+
+            </div>
+        </div>
+        <div class="col-11">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Basic</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="DeletePost" method="post" enctype="multipart/form-data">
+                        <input asp-for="Id" hidden />
+                        <div class="form-group">
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label">Product title</label>
+                            <input type="text" asp-for="Name" disabled placeholder="Type here" class="form-control" id="name" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">Full description</label>
+                            <textarea asp-for="Description" disabled placeholder="Type here" class="form-control" rows="4"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label asp-for="CategoryId" class="form-label">Category</label>
+                                    <select asp-for="CategoryId" disabled class="form-select" asp-items="@ViewBag.CategoryList">
+                                        <option value="">Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Price</label>
+                                    <input asp-for="Price" disabled placeholder="" type="number" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">Stock</label>
+                                <input asp-for="stock" disabled placeholder="" type="text" class="form-control" />
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label class="form-label"> Color</label>
+                                    <div class="row gx-2">
+                                        <input asp-for="color" disabled placeholder="" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label class="form-label"> Size</label>
+                                    <div class="row gx-2">
+                                        <input asp-for="Size" disabled placeholder="" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Media</h4>
+                            </div>
+                            <div class="row">
+                                @foreach (var imageUrl in Model.ImageUrls)
+                                {
+                                    <div class="card-body col-sm-3">
+                                        <div class="input-upload">
+                                            <img src="@imageUrl" alt="Product Image" />
+                                        </div>
+                                    </div>
+                                }
+                                <div class="card-body col-sm-3">
+                                    <div class="input-upload">
+                                        <img src="~/Adassets/imgs/upl/upload1.png" alt="" />
+                                        <input class="form-control" disabled type="file" name="image1" required />
+                                    </div>
+                                </div>
+                                <div class="card-body col-sm-3">
+                                    <div class="input-upload">
+                                        <img id="image-preview" src="~/Adassets/imgs/upl/upload1.png" alt="" />
+                                        <input data-id="1" class="form-control" disabled name="image2" type="file" required />
+                                    </div>
+                                </div>
+                                <div class="card-body col-sm-3">
+                                    <div class="input-upload">
+                                        <img id="image-preview" src="~/Adassets/imgs/upl/upload1.png" alt="" />
+                                        <input data-id="1" class="form-control" disabled name="image3" type="file" required />
+                                    </div>
+                                </div>
+                                <div class="card-body col-sm-3">
+                                    <div class="input-upload">
+                                        <img id="image-preview" src="~/Adassets/imgs/upl/upload1.png" alt="" />
+                                        <input data-id="1" class="form-control" disabled name="image4" type="file" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button type="submit"  class="btn btn-md rounded font-sm hover-up">Delete</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-12">
+        </div>
+
+    </div>
+</section>

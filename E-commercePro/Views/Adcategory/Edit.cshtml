@@ -1,0 +1,38 @@
+﻿
+
+@model E_commercePro.Models.category
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+<div class="card-body col-6">
+    <div class="table-responsive">
+        <h2 class="content-title pt-3 pb-5 ">Category Edit</h2>
+        <br />
+        <table class="table table-hover ">
+            <form method="post" asp-action="Edit">
+                <input asp-for="Id" hidden />
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input type="text" asp-for="Name" placeholder="Enter username" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <br />
+
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <input type="text" asp-for="Description" placeholder="Enter username" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <br />
+                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4 m-2">
+                    <button type="submit" class="btn btn-primary btn-lg m-2">Edit</button>
+
+                    <button asp-controller="Adcategory" asp-action="Categorylist" type="submit" class="btn btn-secondary btn-lg m-2">Close</button>
+                </div>
+            </form>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+﻿@model E_commercePro.Models.Product
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Edit Product</h2>
+            </div>
+        </div>
+        <div class="col-11">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Basic</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                 
+                        
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label">Product title</label>
+                            <input type="text" asp-for="Name" placeholder="Type here" class="form-control" id="name" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">Full description</label>
+                            <textarea asp-for="Description" placeholder="Type here" class="form-control" rows="4"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label asp-for="CategoryId" class="form-label">Category</label>
+                                    <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.CategoryList">
+                                        <option value="">Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Price</label>
+                                    <input asp-for="Price" placeholder="" type="number" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">Stock</label>
+                                <input asp-for="stock" placeholder="" type="text" class="form-control" />
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label class="form-label"> Color</label>
+                                    <div class="row gx-2">
+                                        <input asp-for="color" placeholder="" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label class="form-label"> Size</label>
+                                    <div class="row gx-2">
+                                        <input asp-for="Size" placeholder="" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            @for (int i = 0; i < Model.ImageUrls.Count; i++)
+                            {
+                                <div class="card-body col-sm-3">
+                                    <div class="input-upload">
+                                        <img src="@Model.ImageUrls[i]" alt="Product Image" />
+                                        <input type="hidden" name="existingImageUrls[@i]" asp-for="@Model.ImageUrls[i]" />
+                                    </div>
+                                </div>
+                            }
+
+                            @for (int i = 0; i < Model.ImageUrls.Count; i++)
+                            {
+                                <input type="hidden" name="existingImageUrls[@i]" asp-for="@Model.ImageUrls[i]" />
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" id="productVarientButton" class="btn btn-md rounded font-sm hover-up">Update product-Varient</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+        </div>
+    </div>
+</section>
+
+<script>
+    function previewImage(input, index) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#image-preview-' + index).attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

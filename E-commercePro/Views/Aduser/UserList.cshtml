@@ -1,0 +1,127 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+@model List<UserSignUp>
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Usersers list</h2>
+        <div>
+            <a asp-action="UserCreate" asp-controller="Aduser" class="btn btn-primary"><i class="material-icons md-plus"></i> Create new</a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 col-md-6 me-auto">
+                    <input type="text" placeholder="Search..." id="txtSearch" class="form-control" />
+                </div>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <select class="form-select">
+                        <option>Status</option>
+                        <option>Active</option>
+                        <option>Disabled</option>
+                        <option>Show all</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <select class="form-select">
+                        <option>Show 20</option>
+                        <option>Show 30</option>
+                        <option>Show 40</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th></th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in Model.DistinctBy(u => u.Name))
+                        {                       
+                            <tr>
+                            <td width="40%">
+                                <a href="#" class="itemside">
+                                    <div class="left">
+                                        <img src="~/Adassets/imgs/people/avatar-1.png" class="img-sm img-avatar" alt="Userpic" />
+                                    </div>
+                                    <div class="info pl-3">
+                                            <h6 class="mb-0 title">@obj.Name</h6>
+                                        <small class="text-muted"></small>
+                                    </div>
+                                </a>
+                            </td>
+                                <td>@obj.UserName</td>
+                                <td>@obj.Email</td>
+                                <td> @obj.Password</td>
+                            <td class="text-end">
+                                
+                                <td>
+                                <div class="w-75 btn-group" role="group">
+                                        <a asp-controller="Aduser" asp-action="Useredit" asp-route-id="@obj.ID" class="btn btn-sm btn-brand rounded font-sm mt-15">
+                                        <i class="bi bi-pencil-square">Edit</i>
+                                    </a>
+                                     @* <a asp-controller="Adacces" asp-action="Delete" asp-route-id="@obj.ID" class="btn btn-danger mx-2">
+                                        <i class="bi bi-trash">Delete</i>
+                                    </a>  *@
+                                    
+                                            @if (obj.IsBlocked)
+                                            {
+                                                   <form asp-controller="Aduser" asp-action="ToggleBlock" method="post">
+                                                       <input type="hidden" name="id" value="@obj.ID" />
+                                                <button type="submit" class="btn btn-sm btn-warning rounded font-sm mt-15">Unblock</button>
+                                                   </form> 
+                                            }
+                                            else
+                                            {
+                                                <form asp-controller="Aduser" asp-action="ToggleBlock" method="post">
+                                                    <input type="hidden" name="id" value="@obj.ID" />
+                                                <button type="submit" class="btn btn-sm btn-danger rounded font-sm mt-15">Block</button>
+                                                </form>
+                                            }
+                                        
+                                    
+
+                                </div>
+                            </td>
+                           
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                <!-- table-responsive.// -->
+            </div>
+        </div>
+        <!-- card-body end// -->
+    </div>
+    <!-- card end// -->
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                <li class="page-item"><a class="page-link" href="#">02</a></li>
+                <li class="page-item"><a class="page-link" href="#">03</a></li>
+                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                <li class="page-item"><a class="page-link" href="#">16</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+   
+</section>
+

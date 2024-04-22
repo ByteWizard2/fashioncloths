@@ -1,0 +1,238 @@
+﻿@model E_commercePro.ViewModel.OrderListViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+
+<body>
+    <div class="screen-overlay"></div>
+    <main class="">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order detail</h2>
+                    <p>Details for Order ID: @Model.Order.Id</p>
+                </div>
+            </div>
+            <div class="card">
+                <header class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                            <span> <i class="material-icons md-calendar_today"></i> <b>@Model.Order.OrderDate</b> </span> <br />
+                            <small class="text-muted">Order ID:  @Model.Order.Id</small>
+                        </div>
+                        <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                            <span class="badge rounded-pill me-2" style="background-color: cornflowerblue;">@Model.Order.Status</span>
+                            <form asp-controller="AdOrder" asp-action="UpdateOrderStatus" method="post" class="d-inline">
+                                <input type="hidden" name="orderId" value="@Model.Order.Id" />
+                                <select name="status" class="form-select d-inline-block mb-lg-0 mr-5 mw-200">
+                                    <option>Change status</option>
+                                    <option value="Cancelled">Cancel</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Delivered">Delivered</option>
+                                  @*   <option value="Placed">Placed</option> *@
+                                    <option value="Returned">Returned</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                            <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+                        </div>
+                    </div>
+                </header>
+                <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="row mb-50 mt-20 order-info-wrap">
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-person"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Customer</h6>
+                                    <p class="mb-1">
+                                         @Model.User.Name <br />
+                                        @Model.User.Email <br />
+                                        @Model.User.Phone
+                                    </p>
+                                     <a href="#">View profile</a> 
+                                </div>
+                            </article>
+                        </div>
+                        <!-- col// -->
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-local_shipping"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Order info</h6>
+                                    <p class="mb-1">
+                                        @Model.Order.Id <br />
+                                        Pay method:  @Model.Order.PaymentMethod<br />
+                                        Payment Status: @Model.Order.PaymentStatus
+
+                                    </p>
+                                 @*    {{#if order.delivered}}
+                                    <a href="/api/v1/admin/invoice/{{order._id}}">View invoice</a>
+                                    {{/if}} *@
+                                </div>
+                            </article>
+                        </div>
+                        <!-- col// -->
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-place"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Deliver to</h6>
+                                    <p class="mb-1">
+                                        City: @Model.ShippingAddress.district<br />@Model.Order.ShippingAddress.street<br />
+                                        @Model.ShippingAddress.pincode
+                                    </p>
+                                     <a href="#">View profile</a> 
+                                </div>
+                            </article>
+                        </div>
+                        <!-- col// -->
+                    </div>
+                    <!-- row // -->
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th width="40%">Product</th>
+                                            <th width="20%">Unit Price</th>
+                                            <th width="20%">Quantity</th>
+                                            <th width="20%" class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Order.OrderedItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <a class="itemside" href="#">
+                                                        <div class="left">
+                                                            <img src="@item.Product.ImageUrls[0]" width="40" height="40" class="img-xs" alt="Item" />
+                                                        </div>
+                                                        <div class="info">@item.Product.Name</div>
+                                                    </a>
+                                                </td>
+                                                <td> ₹@item.Product.Price</td>
+                                                <td>@item.Quantity</td>
+                                                <td class="text-end"> ₹@item.Product.Price X @item.Quantity</td>
+                                            </tr>
+                                        }
+                                       
+                                        
+                                        <tr>
+                                            <td colspan="4">
+                                                <article class="float-end">
+                                                    <dl class="dlist">
+                                                        <dt>Subtotal:</dt>
+                                                        <dd>₹@Model.Order.OrderAmount</dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Discount:</dt>
+                                                        <dd>₹ @Model.Order.Amount </dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Grand total:</dt>
+                                                        <dd><b class="h5">₹@Model.Order.DiscountTotal</b></dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                       
+                                                        <dt class="text-muted">Status:</dt>
+                                                        <dd>
+                                                            <span class="badge rounded-pill alert-success text-success">Payment done</span>
+                                                        </dd> 
+                                                    </dl>
+                                                </article>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- table-responsive// -->
+                        </div>
+                        <!-- col// -->
+                        <div class="col-lg-1"></div>
+                        <div class="col-lg-4">
+                            <div class="box shadow-sm bg-light">
+                                <h6 class="mb-15">Payment info</h6>
+                                 <p>
+                                    <img src="/assets/imgs/card-brands/2.png" class="border" height="20" /> Master Card **** **** 4768 <br />
+                                    Business name: Grand Market LLC <br />
+                                    Phone: +1 (800) 555-154-52
+                                </p> 
+                                <p>
+                                    METHOD : <b>@Model.Order.PaymentMethod</b>
+                                </p>
+                            </div>
+                            <div class="box shadow-sm bg-light">
+                                <h6 class="mb-15">Discount info</h6>
+                                <p>
+                                    COUPON CODE : <b> @Model.Order.CouponCod</b>
+                                </p>
+                                <p>
+                                    DISCOUNT : ₹ <b>@Model.Order.Amount</b>
+                                </p>
+                            </div>
+
+                        </div>
+                        <!-- col// -->
+                    </div>
+                </div>
+                <!-- card-body end// -->
+            </div>
+            <!-- card end// -->
+        </section>
+        <!-- content-main end// -->
+
+    </main>
+
+    <script>
+
+        const saveButton = document.getElementById("saveButton");
+        saveButton.addEventListener("click", changeStatus);
+
+        function changeStatus() {
+            const orderStatus = document.getElementById("orderStatus").value;
+            let orderId = saveButton.getAttribute("data-id");
+            console.log("orderStatus", orderStatus);
+            console.log("orderId", orderId);
+
+            fetch("/api/v1/admin/updateorderstatus", {
+                method: "post",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    orderId,
+                    status: orderStatus
+                })
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        //alert(data.message);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: data.message
+                        });
+                    }
+                })
+
+        }
+    </script>
+
+</body>

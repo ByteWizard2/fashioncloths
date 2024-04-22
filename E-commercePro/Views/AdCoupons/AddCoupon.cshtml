@@ -1,0 +1,112 @@
+﻿@model E_commercePro.Models.CouponsList
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+<head>
+    <style>
+        /* Notification styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 40%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<main class="">
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title"> Add Coupons</h2>
+                
+            </div>
+            
+        </div>
+        <div class="card" id="couponForm" >
+            <div class="card-body">
+                <form method="post" asp-action="AddCoupon">
+                    <div class="row">
+                        <div class="mb-4 col-md-6">
+                            <label asp-for="Name" class="form-label">Name</label>
+                            <input asp-for="Name" type="text" placeholder="Type here" class="form-control"  />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4 col-md-6">
+                            <label asp-for="Code" class="form-label">Coupon Code</label>
+                            <input asp-for="Code" type="text" placeholder="Type here" class="form-control"  />
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea id="description" placeholder="Type here" class="form-control" name="Description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="mb-4 col-md-6">
+                            <label asp-for="Userlimit" class="form-label">User limit (Min. 20)</label>
+                            <input asp-for="Userlimit" type="number" placeholder="Type here" class="form-control"  />
+                            <span asp-validation-for="Userlimit" class="text-danger"></span>
+
+                        </div>
+                        <div class="mb-4 col-md-6">
+                            <label asp-for="expiryDate" class="form-label">Expiry Date</label>
+                            <input asp-for="expiryDate" type="date" placeholder="Type here" class="form-control"  />
+                            <span asp-validation-for="expiryDate" class="text-danger"></span>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-4 col-md-6">
+                            <label asp-for="Discount" class="form-label">Discount</label>
+                            <input asp-for="Discount" id="discountAmount" type="number" placeholder="Type here" class="form-control" />
+                            <span asp-validation-for="Discount" class="text-danger"></span>
+                            <span id="discountError" class="text-danger"></span> <!-- Add span for displaying error message -->
+                        </div>
+                        <div class="mb-4 col-md-6">
+                            <label asp-for="Minamount" class="form-label">Minimum Amount</label>
+                            <input asp-for="Minamount" id="minAmount" type="number" placeholder="Type here" class="form-control" />
+                            <span asp-validation-for="Minamount" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid d-flex justify-content-center ">
+                        <button type="submit" id="addCouponButton" class="btn btn-primary text-center ">Create Coupon</button>
+                    </div>
+                </form>
+            </div>
+            <div id="notification" class="notification"></div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('couponForm').addEventListener('submit', function (event) {
+            var discountAmount = document.getElementById('discountAmount').value;
+            var minAmount = document.getElementById('minAmount').value;
+            var discountError = document.getElementById('discountError');
+
+            if (parseInt(discountAmount) >= parseInt(minAmount)) {
+                // Show error message
+                event.preventDefault();
+                discountError.textContent = "Discount amount must be less than the minimum amount.";
+            } else {
+                // Clear error message if validation is successful
+                discountError.textContent = "";
+            }
+        });
+    </script>
+
+   
+
+
+</main>
+
+
+

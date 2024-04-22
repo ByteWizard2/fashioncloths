@@ -1,0 +1,461 @@
+﻿@model E_commercePro.ViewModel.OrderViewModel
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg" />
+    <!-- Template CSS -->
+    <link href="/assets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+    <style>
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        input[type="radio"]:checked + .card {
+            border-color: #e5aa3b;
+        }
+
+        input[type="radio"]:checked + .paymentcard {
+            border-color: #e5aa3b;
+        }
+        /* Notification styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 40%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .selected-address {
+            background-color: #e5aa3b; /* This color matches the header background color for consistency */
+            color: white; /* Change the text color to white for better contrast */
+        }
+
+        .selected-payment {
+            border-color: #e5aa3b; /* Add your desired border color */
+        }
+    </style>
+</head>
+
+<body>
+   
+    <div class="screen-overlay"></div>
+    <main>
+        <section class="content-main">
+            <div class="content-header justify-content-center ">
+                <div>
+                    <h2 class="content-title card-title">Checkout</h2>
+                    @if (Model.IsWalletPayment)
+                    {
+                        <div id="walletMessage" class="alert alert-danger" role="alert">
+                            Your wallet balance is insufficient.Add amount in your wallet
+                        </div>
+                    }
+                   
+                </div>
+                @{
+                    if (TempData["faild"] != null)
+                    {
+                        <div id="notification" class="alert alert-danger">@TempData["faild"]</div>
+                    }
+                }
+            </div>
+            <div class="card">
+                <header style="background-color: #e5aa3b;" class="card-header  text-white">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                            <span> <i class="material-icons md-calendar_today"></i> <b></b> </span> <br />
+                        </div>
+                    </div>
+                </header>
+                <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var address in Model.UserAddresses)
+                        {
+                            <label for="address_@address.AddressId" class="col-4">
+                                <input type="radio" id="address_@address.AddressId" name="selectedAddress" value="@address.AddressId" style="display: none;" class="addressLabel">
+                                <div class="card">
+                                    <div class="card-header text-center fw-bolder">@* @address.Type *@</div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Full Name: <span>@address.fillname</span></h5>
+                                        <p class="card-text">Phone: <span>@address.phone</span></p>
+                                        <p class="card-text">Street: <span>@address.street</span></p>
+                                        <p class="card-text">Locality: <span>@address.locality</span></p>
+                                        <p class="card-text">District: <span>@address.district</span></p>
+                                        <p class="card-text">State: <span>@address.state</span></p>
+                                        <p class="card-text">Pin code: <span>@address.pincode</span></p>
+                                    </div>
+                                </div>
+                            </label>
+                        }
+                    </div>
+                    <hr>
+                    <!-- row // -->
+                    <div class="row  my-3 justify-content-center ">
+                        <button id="addAddress" class="btn btn-outline-dark  col-6 justify-content-center align-content-center  " href=""><span>Add new address</span></button>
+                    </div>
+                 
+                    <address id="addressForm" hidden>
+                        <form asp-controller="Order" asp-action="AddAddress" method="post">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <h6>1. General info</h6>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <div class="mb-4">
+                                                        <label class="form-label">Full Name</label>
+                                                        <input name="fillName" type="text" placeholder="Type here" class="form-control" required>
+                                                        <p id="fullnamealert" class="text-danger"></p>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label">Phone</label>
+                                                        <input name="phone" type="number" placeholder="Type here" class="form-control" required>
+                                                        <p id="phonealert" class="text-danger"></p>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label">Type of Address</label>
+                                                        <input name="type" type="text" placeholder="Home, Office.." class="form-control" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="mb-4 mt-0">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <h6>2. Details</h6>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <div class="mb-4">
+                                                        <label class="form-label">House no., Street</label>
+                                                        <input name="street" type="text" placeholder="Type here" class="form-control" required>
+                                                        <p id="streetalert" class="text-danger"></p>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label">Locality</label>
+                                                        <input name="locality" type="text" placeholder="Type here" class="form-control" required>
+                                                        <p id="localityalert" class="text-danger"></p>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label">District</label>
+                                                        <input name="district" type="text" placeholder="Type here" class="form-control" required>
+                                                        <p id="districtalert" class="text-danger"></p>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="mb-4 col-md-6">
+                                                            <label class="form-label">State</label>
+                                                            <select name="state" class="form-select">
+                                                                <option> Kerala </option>
+                                                                <option> Karnataka </option>
+                                                                <option> Goa </option>
+                                                                <option>Bihar </option>
+                                                                <option> Maharashtra </option>
+                                                                <option> Chhattisgarh </option>
+                                                                <option>Andhra Pradesh </option>
+                                                                <option> Punjab </option>
+                                                                <option> Arunachal Pradesh </option>
+                                                                <option> Assam </option>
+                                                                <option>Manipur</option>
+                                                                <option>Gujarat</option>
+                                                                <option>Mizoram</option>
+                                                                <option>Tripura</option>
+                                                                <option>West Bengal</option>
+                                                                <option>Haryana</option>
+                                                                <option>Jharkhand</option>
+                                                                <option>Himachal Pradesh</option>
+                                                                <option>Odisha</option>
+                                                                <option>Nagalad</option>
+                                                                <option>Madhya Pradesh</option>
+                                                                <option>Uttar Pradesh</option>
+                                                                <option>Sikkim</option>
+                                                                <option>Rajasthan</option>
+                                                                <option>Tamil Nadu</option>
+                                                                <option>Meghalaya</option>
+                                                                <option>Uttarakhand</option>
+                                                                <option>Delhi</option>
+                                                                <option>Telangana</option>
+                                                                <option>Jammu & Kashmir</option>
+                                                                   
+
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-4 col-md-6">
+                                                            <label class="form-label">Pin Code</label>
+                                                            <input name="pinCode" type="number" placeholder="Type here" class="form-control" required>
+                                                            <p id="pincodealert" class="text-danger"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="mb-4 mt-0">
+                                            <div class="row d-flex justify-content-center">
+                                                <button type="submit" class="btn btn-md rounded font-sm hover-up col-3">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </address>
+             
+                    <hr>
+
+                    <!-- row // -->
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <!-- Price details table -->
+                                    <thead style="background-color: #e5aa3b;" class="text-white">
+                                        <tr>
+                                            <th colspan="4">Price details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var cartItem in Model.CartItems)
+                                        {
+                                            <tr>
+                                                <td>@cartItem.Product.Name</td>
+                                                <td>X @cartItem.Quantity</td>
+                                                <td>₹ @(cartItem.Quantity * cartItem.Product.Price)</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td>Price</td>
+                                            <td colspan="6" class="text-end">₹@Model.TotalPrice </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Discount</td>
+                                            <td colspan="6" class=" text-end">₹ @Model.Discount </td>
+                                        </tr>
+                                        <!-- Shipping fee and total price -->
+                                        <tr>
+                                            <td class="text-black-50 ">Shipping fee</td>
+                                            <td colspan="6" class="text-black-50  text-end" id="shippingCharge">₹ 0</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bolder fs-5">Total price</td>
+                                            <td id="grandTotal" class="fw-bolder fs-5 text-end">₹@(Model.TotalPrice - Model.Discount)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <form id="orderForm" asp-controller="Order" asp-action="PlaceOrder" method="post">
+                                <!-- Include your address selection input fields -->
+                                <input type="hidden" name="selectedAddressId" value="" id="selectedAddressId">
+                                <!-- Include your payment method selection input fields -->
+                                <input type="hidden" name="selectedPaymentMethod" value="" id="selectedPaymentMethod">
+
+                              
+                                
+                                <button type="submit" id="placeOrderButton"  class="btn btn-outline-dark w-50 justify-content-center"><span>Place Order</span></button>
+                            </form>
+                        </div>
+                        <!-- col// -->
+                       
+                        <div class="col-lg-1"></div>
+                     
+                        <div class="col-lg-6">
+                            <div style="background-color: #e5aa3b;" class="box shadow-sm mb-2  ">
+                                <h4 class=" text-center text-white">Payment Method</h4>
+                            </div>
+                            <div class="row">
+                                <label for="razorpay" class="col-4 d-block w-100 ">
+                                    <input type="radio" id="razorpay" name="paymentmethod" value="Online" style=";">
+                                    <div class="box shadow-sm bg-light mb-2 paymentcard">
+                                        <h6 class="mb-15">Razor Pay</h6>
+                                        <p>
+                                            <img src="/assets/imgs/card-brands/2.png" class="border" height="20" /> Master Card **** **** 4768 <br />
+                                            Business name: Grand Market LLC <br />
+                                            Phone: +1 (800) 555-154-52
+                                        </p>
+                                    </div>
+                                </label>
+                                <label for="Wallet" class="col-4 d-block w-100  ">
+                                    <input type="radio" id="Wallet" name="paymentmethod" value="Wallet" style="" checked>
+                                    <div class="box shadow-sm bg-light mb-2 paymentcard">
+                                        <h6 class="mb-15"><i class="fa-solid fa-money-bill-1-wave"></i> Pay with wallet (Wallet)</h6>
+                                        <p>
+                                            You can check your balance from your profile.
+                                        </p>
+                                    </div>
+                                </label>
+                                <label for="COD" class="col-4 d-block w-100">
+                                    <input type="radio" id="COD" name="paymentmethod" value="COD" style="">
+                                    <div id="CODOption" class="box shadow-sm bg-light paymentcard" onclick="selectPaymentMethod('COD')">
+                                        <h6 class="mb-15"><i class="fa-solid fa-money-bill-1-wave"></i> Cash On Delivery (COD)</h6>
+                                        <p>
+                                            We accept cash on delivery. But it is recommended to pay online.
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                           
+
+                             <div class="h-25 pt-4">
+                                <div class="mb-3">
+                                    <label>Notes</label>
+                                    <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea>
+                                </div>
+                                <button class="btn btn-primary">Save note</button>
+                            </div> 
+                        </div>
+                        <!-- col// -->
+                    </div>
+                </div>
+                <!-- card-body end// -->
+            </div>
+            <!-- card end// -->
+        </section>
+        <div id="notification" class="notification"></div>
+        <!-- content-main end// -->
+
+    </main>
+    <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/vendors/select2.min.js"></script>
+    <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/assets/js/main.js?v=1.1" type="text/javascript"></script>
+  <script>
+        
+
+    //toggling place order button
+    const cod = document.getElementById('COD');
+    cod.addEventListener('click', ()=>{
+        orderButton.innerText = 'Place Order';
+    });
+
+    const wallet = document.getElementById('Wallet');
+    wallet.addEventListener('click', ()=>{
+        orderButton.innerText = 'Place Order';
+    })
+    
+    const razorpay = document.getElementById('razorpay');
+    razorpay.addEventListener('click', ()=>{   
+        orderButton.innerText = 'Proceed to payment';
+    });
+
+    //toggling address form
+    const addAddress = document.getElementById('addAddress');
+    addAddress.addEventListener('click', (event)=>{
+        event.preventDefault();
+        console.log("clikend");
+            const addressForm = document.getElementById("addressForm");
+        if (addressForm.hidden === true) {
+            addressForm.hidden = false;
+            addAddress.innerText = "Cancel";
+        } else {
+            addressForm.hidden = true;
+            addAddress.innerText = "Add new address";
+        }
+    });
+
+       
+
+
+</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addressLabels = document.querySelectorAll(".addressLabel");
+            addressLabels.forEach(function (label) {
+                label.addEventListener("click", function (event) {
+                    const clickedLabel = event.currentTarget;
+                    const radioInput = clickedLabel.querySelector('input[type="radio"]');
+                    if (radioInput) {
+                        radioInput.checked = true;
+                        // Remove the 'selected-address' class from all labels
+                        addressLabels.forEach(function (label) {
+                            label.classList.remove('selected-address');
+                        });
+                        // Add the 'selected-address' class to the clicked label
+                        clickedLabel.classList.add('selected-address');
+                    }
+                });
+            });
+        });
+
+        function togglePaymentSelection(optionId) {
+            const option = document.getElementById(optionId);
+            if (option) {
+                const radioInput = option.previousElementSibling;
+                if (radioInput) {
+                    radioInput.checked = true;
+                    // Remove 'selected-address' class from all payment method options
+                    const paymentOptions = document.querySelectorAll('.paymentcard');
+                    paymentOptions.forEach(function (option) {
+                        option.classList.remove('selected-address');
+                    });
+                    // Add 'selected-address' class to the clicked payment method option
+                    option.classList.add('selected-address');
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const cod = document.getElementById('COD');
+            const codCard = document.getElementById('CODCard');
+
+            cod.addEventListener('click', function () {
+                codCard.style.borderColor = '#e5aa3b';
+            });
+
+            const wallet = document.getElementById('Wallet');
+            const walletCard = document.getElementById('WalletCard');
+
+            wallet.addEventListener('click', function () {
+                walletCard.style.borderColor = '#e5aa3b';
+            });
+
+           
+        });
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const placeOrderButton = document.getElementById('placeOrderButton');
+            placeOrderButton.addEventListener('click', function () {
+                const selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked').value;
+                const selectedPaymentMethod = document.querySelector('input[name="paymentmethod"]:checked').value;
+                document.getElementById('selectedAddressId').value = selectedAddressId;
+                document.getElementById('selectedPaymentMethod').value = selectedPaymentMethod;
+            });
+        });
+
+
+    </script>
+    <script>
+    // JavaScript code to hide the message after 5 seconds
+    window.onload = function () {
+        var walletMessage = document.getElementById("walletMessage");
+        if (walletMessage) {
+            setTimeout(function () {
+                walletMessage.style.display = "none";
+            }, 5000); // Hide the message after 5 seconds (5000 milliseconds)
+        }
+    };
+
+        setTimeout(function () {
+            var notification = document.getElementById('notification');
+            notification.style.display = 'none';
+        }, 5000); // 5000 milliseconds = 5 seconds
+</script>
+  
+ 
+
+</body>
+
+
+
+

@@ -1,0 +1,188 @@
+﻿@model E_commercePro.Models.Offer
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+<head>
+    <link href="~/dist/cropper.css" rel="stylesheet">
+    <script src="~/dist/cropper.js"></script>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <main class="">
+        <section class="content-main">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Offer</h2>
+
+                    </div>
+                </div>
+
+                <form method="post" asp-action="OfferEdit" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Basic</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <label asp-for="name" class="form-label">Offer Title</label>
+                                        <input asp-for="name" type="text" placeholder="Type here" class="form-control" name="name" />
+                                        <span asp-validation-for="name" class="text-danger"></span>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label asp-for="description" class="form-label">Full description</label>
+                                        <textarea asp-for="description" placeholder="Type here" class="form-control" rows="4" name="description"></textarea>
+                                        <span asp-validation-for="description" class="text-danger"></span>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-4">
+                                                <label asp-for="discount" class="form-label">Discount Percentage</label>
+                                                <input asp-for="discount" type="text" placeholder="%" class="form-control" id="product_name" name="discount" required />
+                                                <span asp-validation-for="discount" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-4">
+                                                <label asp-for="expirydate" class="form-label">Expiry date</label>
+                                                <input asp-for="expirydate" type="date" placeholder="Discouont %" class="form-control" name="expirydate" />
+                                                <span asp-validation-for="expirydate" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Category</label>
+                                        <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.CategoryList">
+                                            <option value="">Select Category</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex  justify-content-center">
+                                        <button for="addOfferForm" type="submit" id="addButton" class="btn btn-md rounded font-sm hover-up">Publish</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- card end// -->
+
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Media</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-upload">
+                                        <img id="image-preview1" src="@Model.banner" alt="" />
+                                       @*  <img src="@Model.banner" alt="Product Image" /> *@
+                                        <input data-id="1" class="form-control" name="images1" type="file" id="image-input-1" accept="image/*" onchange="previewImage(event)" required />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <!-- content-main end// -->
+
+        <div class="modal fade" id="imageModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="imagecrop1 width-100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="cropButton1" class="btn btn-primary">Crop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    /*const addButton = document.getElementById('addButton')
+    addButton.addEventListener('click', () => {
+        fetch
+    })*/
+
+
+    let cropper;
+    function previewImage(event) {
+        const input = event.target;
+        console.log("Entered preview image", input)
+        let number = input.getAttribute("data-id");
+
+        console.log(`image-preview${number}`);
+        const preview = document.getElementById(`image-preview${number}`);
+        const imageElement = document.querySelector(`.imagecrop${number}`);
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                //preview.src = e.target.result;
+
+                $(document).ready(function () {
+                    $(`#imageModal${number}`).modal('show');
+                });
+
+                let img = document.createElement("img");
+                img.id = `image`;
+                img.src = e.target.result;
+
+                imageElement.appendChild(img);
+
+                //crop image
+                cropper = new Cropper(img, {
+                    aspectRatio: 0,
+                    viewMode: 1,
+                    dragMode: "move",
+                    minContainerWidth: 450,
+                    minContainerHeight: 500,
+                    minCropBoxWidth: 400,
+                    minCropBoxHeight: 400,
+                    minCanvasHeight: 500,
+                    minCanvasWidth: 500,
+
+                });
+
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        const cropButton = document.getElementById(`cropButton${number}`);
+        cropButton.addEventListener("click", () => {
+            console.log("Entered crop button")
+            let imgsrc = cropper.getCroppedCanvas().toDataURL("image/jpeg");
+            console.log(imgsrc);
+            preview.src = imgsrc;
+            //input.value = imgsrc;
+            //close modal
+            var modal = document.getElementById(`imageModal${number}`);
+            console.log("This is modal", modal)
+            var bootstrapModal = bootstrap.Modal.getInstance(modal);
+            bootstrapModal.hide();
+        });
+    }
+
+
+
+
+</script>

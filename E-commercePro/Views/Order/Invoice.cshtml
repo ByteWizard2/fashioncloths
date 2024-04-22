@@ -1,0 +1,193 @@
+﻿@model E_commercePro.ViewModel.InvoiceViewModel
+
+
+
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/invoice.css">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+    .invoice-company {
+        background-color: #f8f9fa;
+        padding: 10px;
+        font-size: 24px;
+    }
+
+    .invoice-header {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .table-invoice tbody tr:nth-child(odd) {
+        background-color: #f8f9fa;
+    }
+
+    .table-invoice th,
+    .table-invoice td {
+        border: 1px solid #dee2e6;
+        padding: 8px;
+    }
+
+    .invoice-price {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .invoice-note {
+        margin-top: 20px;
+    }
+
+    .invoice-footer {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+</head>
+<body>
+    <div class="container mt-5 pt-5">
+        <div class="col-md-12">
+            <div class="invoice">
+                <!-- Invoice Header -->
+                <div class="invoice-company text-inverse f-w-600">
+                    <span class="pull-right hidden-print">
+                        <a href="javascript:;" class="btn btn-sm btn-white m-b-10 p-l-5" id="exportPdf">
+                            <i class="fa fa-file t-plus-1 text-danger fa-fw fa-lg"></i> Export as PDF
+                        </a>
+                        <a href="javascript:;" onclick="window.print()" class="btn btn-sm btn-white m-b-10 p-l-5">
+                            <i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> Print
+                        </a>
+                    </span>
+                    Ashion, Inc
+                </div>
+
+                <!-- From and To Addresses -->
+                <div class="invoice-header">
+                    <div class="row">
+                        <div class="invoice-from col-md-6">
+                            <small>From</small>
+                            <address class="m-t-5 m-b-5">
+                                <strong class="text-inverse">Hamster Fashion, Inc.</strong><br>
+                                Banglore<br>
+                                Gandhi nagar, 4329<br>
+                                Phone: (91) 8088127145<br>
+                               
+                            </address>
+                        </div>
+                        <div class="invoice-to col-md-6 text-end">
+                            <small>To</small>
+                            <address class="m-t-5 m-b-5">
+                                <strong class="text-inverse">@Model.User.Name</strong><br>
+                                @Model.ShippingAddress.street<br>
+                                @Model.ShippingAddress.locality<br>
+                                @Model.ShippingAddress.district, @Model.ShippingAddress.state<br>
+                                Phone: @Model.ShippingAddress.phone<br>
+                                Pincode: @Model.ShippingAddress.pincode
+                            </address>
+                        </div>
+                    </div>
+                    <div class="invoice-date">
+                        <small>Invoice </small>
+                        <div class="date text-inverse m-t-5">@Model.Order.OrderDate.ToString("yyyy-MM-dd")</div>
+                        <div class="invoice-detail">
+                            #@Model.Order.Id<br>
+                            online shopping
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Content -->
+                <div class="invoice-content">
+                    <div class="table-responsive">
+                        <table class="table table-invoice">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center" width="10%">Rate</th>
+                                    <th class="text-center" width="10%">Quantity</th>
+                                    <th class="text-right" width="20%">Line Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="text-inverse">@item.ProductName</span><br>
+                                        </td>
+                                        <td class="text-center">₹ @item.Price</td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-right">₹ @(item.Price * item.Quantity)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Invoice Price -->
+                    <div class="invoice-price text-end">
+                        <div class="invoice-price-left">
+                            <div class="invoice-price-row">
+                                <div class="sub-price">
+                                    <small>Delivery:</small>
+                                  @*   <span class="text-inverse">₹ @Model.Order.DeliveryCharge</span> *@
+                                </div>
+                                <div class="sub-price">
+                                    <small>Subtotal:</small>
+                                   @*  <span class="text-inverse">₹ @(Model.Order.OrderAmount - Model.Order.CouponDiscount)</span> *@
+                                </div>
+                                <div class="sub-price">
+                                    <small>Discount:</small>
+                                   @*  <span class="text-inverse">₹ @Model.Order.CouponDiscount</span> *@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-price-right">
+                            <small>Total:</small> <span class="f-w-600">₹ @Model.Order.OrderAmount</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Note -->
+                <div class="invoice-note">
+                    * Make all cheques payable to Urbane Wardrobe<br>
+                    * Payment is due within 30 days<br>
+                    * If you have any questions concerning this invoice, contact [Name, Phone Number, Email]
+                </div>
+
+                <!-- Invoice Footer -->
+                <div class="invoice-footer">
+                    <p class="text-center m-b-5 f-w-600">
+                        THANK YOU FOR YOUR BUSINESS
+                    </p>
+                    <p class="text-center">
+                        <span class="m-r-10"><i class="fa fa-fw fa-lg fa-globe"></i> hamsterFashion.com</span>
+                        <span class="m-r-10"><i class="fa fa-fw fa-lg fa-phone-volume"></i> T:91-1234567890</span>
+                        <span class="m-r-10">
+                            <i class="fa fa-fw fa-lg fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="_cf_email_"
+                                                                          data-cfemail="94e6e0fdf1f9e4e7d4f3f9f5fdf8baf7fbf9">hamsterFashion@gmail.com</a>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#exportPdf').on('click', function () {
+            var options = {
+                margin: 10,
+                filename: 'invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            var element = document.querySelector('.invoice');
+            html2pdf(element, options);
+        });
+    });
+</script>

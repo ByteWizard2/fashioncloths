@@ -1,0 +1,119 @@
+﻿
+ @model E_commercePro.Models.UserSignUp
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutUserProfile.cshtml";
+}
+
+<head>
+    <style>
+        /* Notification styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 40%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="screen-overlay"></div>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Profile</h2>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row gx-5">
+                        <div class="col-lg-12">
+                            <section class="content-body p-xl-4">
+                                <!--profile.// -->
+                                    <input type="hidden" asp-for="ID"/>
+                                    <div class="row">
+                                        <div class="col-lg-8">
+                                            <div class="row gx-3">
+                                                <div class="col-lg-12 mb-3">
+                                                    <label asp-for="Name" class="form-label">Name </label>
+                                                    <input asp-for="Name" class="form-control" type="text" id="name" disabled />
+                                                </div>
+                                                <!-- col .// -->
+                                                <div class="col-6 mb-3">
+                                                    <label asp-for="UserName" class="form-label">User Name</label>
+                                                    <input asp-for="UserName" class="form-control" type="text" placeholder="Type here" id="username" disabled />
+                                                </div>
+                                                <!-- col .// -->
+                                                <div class="col-lg-6 mb-3">
+                                                    <label asp-for="Email" class="form-label">Email</label>
+                                                    <input asp-for="Email" class="form-control" type="email" id="email" disabled />
+                                                </div>
+                                                <!-- col .// -->
+                                                <div class="col-lg-6 mb-3">
+                                                    <label asp-for="Phone" class="form-label">Phone</label>
+                                                    <input asp-for="Phone" class="form-control" type="tel" disabled />
+                                                </div>
+
+                                            </div>
+                                            <!-- row.// -->
+                                        </div>
+                               
+                                
+                                        
+                                </div>
+                                <!-- row.// -->
+                                <br />
+                             
+                                <a asp-controller="UserProfile" asp-action="PEdit" asp-route-id="@Model.ID" class="btn btn-md rounded font-sm hover-up ">
+                                    Edit</a>
+
+                             
+
+
+
+                                <hr class="my-5" />
+                                <div class="row" style="max-width: 920px">
+                                    <div class="col-md">
+                                        <article class="box mb-3 bg-light">
+                                            <a asp-controller="UserProfile" asp-action="ChangePassword" class="btn float-end btn-light btn-sm rounded font-md" >Change</a>
+                                            <h6>Password</h6>
+                                            <small class="text-muted d-block" style="width: 70%">You can reset or change your password by clicking here</small>
+                                        </article>
+                                    </div>
+                                    <!-- col.// -->
+                                    <div class="col-md">
+                                        <article class="box mb-3 bg-light">
+                                            <a onclick="return confirm('Are you sure you want to deactivate? This action cannot be undone.')" class="btn float-end btn-light rounded btn-sm font-md" href="/api/v1/users/delete-user/{{user._id}}">Deactivate</a>
+                                            <h6>Remove account</h6>
+                                            <small class="text-muted d-block" style="width: 70%">Once you delete your account, there is no going back.</small>
+                                        </article>
+                                    </div>
+                                    <!-- col.// -->
+                                </div>
+                                <!-- row.// -->
+                            </section>
+                            <!-- content-body .// -->
+                        </div>
+                        <!-- col.// -->
+                    </div>
+                    <!-- row.// -->
+                </div>
+                <!-- card body end// -->
+            </div>
+            <!-- card end// -->
+        </section>
+        <div id="notification" class="notification"></div>
+        <!-- content-main end// -->
+
+
+
+ </body>
+
+
+ 
+ 

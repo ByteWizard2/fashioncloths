@@ -1,0 +1,79 @@
+﻿@model E_commercePro.Models.UserSignUp
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+<div class="card-body">
+   <div class="table-responsive">
+      <table class="table table-hover">
+
+            <form class="mx-1 mx-md-4" method="post" asp-action="UserCreate" asp-controller="Aduser">
+
+                @if (ViewData.ModelState.ContainsKey("ee"))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @Html.ValidationMessage("ee")
+                    </div>
+                }
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <label asp-for="Name"></label>
+                        <input type="text" asp-for="Name" placeholder="Enter username" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <label asp-for="UserName"></label>
+                        <input type="text" asp-for="UserName" placeholder="Enter username" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <label asp-for="Email"></label>
+                        <input type="email" asp-for="Email" class="form-control" placeholder="Enter email" autocomplete="off " />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <label asp-for="Password"></label>
+                        <input type="password" asp-for="Password" class="form-control" placeholder="Enter password" autocomplete="off" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                        <label asp-for="ConformPassword"></label>
+                        <input type="password" asp-for="ConformPassword" class="form-control" placeholder="Enter confirm password" autocomplete="off" />
+                        <span asp-validation-for="ConformPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+
+
+                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Create</button>
+                </div>
+
+
+
+            </form>
+
+      </table>
+  </div>
+</div>

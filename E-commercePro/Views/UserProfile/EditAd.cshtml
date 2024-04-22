@@ -1,0 +1,100 @@
+﻿    @model E_commercePro.Models.Address
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutUserProfile.cshtml";
+}
+
+<body>
+    <div class="screen-overlay"></div>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content-header">
+                        <h2 class="content-title">Edit Address</h2>
+                    </div>
+                </div>
+            </div>
+           
+            <address>
+                <form asp-action="EditAd" method="post">
+                    <input type="hidden" asp-for="AddressId" />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <h6>1. General info</h6>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="mb-4">
+                                                <label class="form-label">Full Name</label>
+                                                <input  asp-for="fillname" type="text" placeholder="Type here" class="form-control" required>
+                                                <p id="fullnamealert" class="text-danger "></p>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label class="form-label">Phone</label>
+                                                <input name="phone" asp-for="phone" type="number" placeholder="Type here" class="form-control" required>
+                                                <p id="phonealert" class="text-danger "></p>
+                                                <span asp-validation-for="phone" class="text-danger "></span>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label class="form-label">Type of Address</label>
+                                                <input name="type" type="text" placeholder="Home, Office.." class="form-control" required>
+                                            </div>
+                                        </div> <!-- col.// -->
+                                    </div> <!-- row.// -->
+                                    <hr class="mb-4 mt-0">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <h6>2. Details</h6>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="mb-4">
+                                                <label class="form-label">House no., Street</label>
+                                                <input name="street" asp-for="street" type="text" placeholder="Type here" class="form-control" required>
+                                                <p id="streetalert" class="text-danger "></p>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label class="form-label">Locality</label>
+                                                <input name="locality" asp-for="locality" type="text" placeholder="Type here" class="form-control" required>
+                                                <p id="localityalert" class="text-danger "></p>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label class="form-label">District</label>
+                                                <input name="district" asp-for="district" type="text" placeholder="Type here" class="form-control" required>
+                                                <p id="districtalert" class="text-danger "></p>
+                                            </div>
+                                            <div class="row">
+                                                <div class="mb-4 col-md-6">
+                                                    <label class="form-label">State</label>
+                                                    <select name="state" asp-for="state" class="form-select">
+
+                                                        <option> Kerala  </option>
+                                                        <option> Karnataka  </option>
+
+                                                    </select>
+                                                </div>
+                                                <div class="mb-4 col-md-6">
+                                                    <label class="form-label">Pin Code</label>
+                                                    <input name="pinCode" asp-for="pincode" type="number" placeholder="Type here" class="form-control" required>
+                                                    <p id="pincodealert" class="text-danger "></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="mb-4 mt-0">
+                                    <div class="row d-flex justify-content-center  ">
+                                        <button type="submit" class="btn btn-md rounded font-sm hover-up col-3 ">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </address>
+        </section> <!-- content-main end// -->
+</body>
+

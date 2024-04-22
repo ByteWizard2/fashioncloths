@@ -1,0 +1,286 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+    var totalAmount = ViewBag.TotalAmount;
+    var totalSalesCount = ViewBag.TotalSales;
+    var totalProducts = ViewBag.TotalProduct;
+    var totalategory = ViewBag.TotalCategory;
+    var totalMonthlyRevenue = ViewBag.MonthlyRevenue;
+
+    var yearlyChartData = (SalesChartData)ViewBag.YearlyChartData;
+    var monthlyChartData = (SalesChartData)ViewBag.MonthlyChartData;
+
+    var currentYear = ViewBag.Currentyear;
+
+    var topBestSellingProducts = (List<BestSellingProduct>)ViewBag.TopBestSellingProducts;
+    var topBestSellingCategories = (List<BestSellingCategory>)ViewBag.TopBestSellingCategories;
+
+}
+
+
+<body>
+    <div class="screen-overlay"></div>
+    <main class="">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Dashboard</h2>
+                    <p>Whole data about your business here</p>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Revenue</h6>
+                                <span>₹ @(totalAmount)</span>
+                                <span class="text-sm"> Shipping fees are not included </span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <a title="Go to Orders" href="/api/v1/admin/orders">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Orders</h6>
+                                    <span>@(totalSalesCount)</span>
+
+                                    <span class="text-sm"> Total orders </span>
+                                </div>
+                            </article>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3">
+                    <a title="Go to Products" href="/api/v1/admin/products">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Products</h6>
+                                    <span>@(totalProducts)</span>
+                                    <span class="text-sm"> In @(totalategory) Categories </span>
+                                </div>
+                            </article>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Monthly Earning</h6>
+                                <span>₹ @(totalMonthlyRevenue)</span>
+                                <span class="text-sm"> Based in your local time. </span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <h5 class="card-title">Sale statistics</h5>
+                            <header class="card-header">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 col-12 me-auto mb-md-0 mb-3">
+                                        <div class="d-flex ">
+                                            <input type="text" value="2024" placeholder="2024" class="  form-control mx-1 hidden " id="time" disabled />
+                                            <p id="catAlert" class="text-danger"></p>
+                                            <a href="#" id="yearlyBtn" data-id="yearly" class="btn btn-primary btn-sm rounded mx-1 ">Yearly</a>
+                                            <a href="#" id="monthlyBtn" data-id="monthly" class="btn btn-primary btn-sm rounded mx-1 ">Monthly</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </header>
+                            <canvas id="myChart" height="180px"></canvas>
+                        </article>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <article class="card-body">
+                                    <h5 class="card-title">Best Selling Products (Top 10)</h5>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Sl.N</th>
+                                                <th>Product Name</th>
+                                                <th>Total Sold</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < topBestSellingProducts.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@topBestSellingProducts[i].ProductName</td>
+                                                    <td>@topBestSellingProducts[i].TotalSold</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <article class="card-body">
+                                    <h5 class="card-title">Best Selling Categories (Top 10)</h5>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Sl.N</th>
+                                                <th>Category Name</th>
+                                                <th>Total Sold</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < topBestSellingCategories.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@(i + 1)</td>
+                                                    <td>@topBestSellingCategories[i].CategoryName</td>
+                                                    <td>@topBestSellingCategories[i].TotalSold</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    
+                </div>
+
+        </section>
+        <!-- content-main end// -->
+    </main>
+</body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+<script>
+    var currentYear = @ViewBag.CurrentYear;
+
+    var yearlyChartData = {
+        labels: @Json.Serialize(Enumerable.Range(2020, 5).Select(y => y.ToString()).ToArray()),
+        salesData: @Json.Serialize(yearlyChartData.SalesData),
+        revenueData: @Json.Serialize(yearlyChartData.RevenueData),
+        productsData: @Json.Serialize(yearlyChartData.ProductsData)
+            };
+
+    var monthlyChartData = {
+        labels: @Json.Serialize(Enumerable.Range(1, 12).Select(m => new DateTime(currentYear, m, 1).ToString("MMM")).ToArray()),
+        salesData: @Json.Serialize(monthlyChartData.SalesData),
+        revenueData: @Json.Serialize(monthlyChartData.RevenueData),
+        productsData: @Json.Serialize(monthlyChartData.ProductsData)
+            };
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthlyChartData.labels, // Initial data to be displayed (yearly by default)
+            datasets: [
+                {
+                    label: 'Sales',
+                    data: monthlyChartData.salesData,
+                    backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                    borderColor: 'rgba(44, 120, 220)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Revenue',
+                    data: monthlyChartData.revenueData,
+                    backgroundColor: 'rgba(380, 200, 230, 0.2)',
+                    borderColor: 'rgb(380, 200, 230)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Products',
+                    data: monthlyChartData.productsData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Sales Chart'
+                }
+            },
+            scales: {
+                x: {
+                    type: 'category',
+                    title: {
+                        display: true,
+                        text: 'Year'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Range'
+                    }
+                }
+            }
+        }
+    });
+
+    // Function to update chart data based on filter
+    function updateChartData(filter) {
+        var currentYear = document.getElementById('time').value;
+        fetch(`/AdDashboard/GetSalesChartData/${filter}/${currentYear}`)
+            .then(res => res.json())
+            .then(data => {
+
+                if (filter === 'yearly') {
+
+                    myChart.data.labels = yearlyChartData.labels;
+                    myChart.data.datasets[0].data = yearlyChartData.salesData;
+                    myChart.data.datasets[1].data = yearlyChartData.revenueData;
+                    myChart.data.datasets[2].data = yearlyChartData.productsData;
+                } else if (filter === 'monthly') {
+
+                    myChart.data.labels = monthlyChartData.labels;
+                    myChart.data.datasets[0].data = monthlyChartData.salesData;
+                    myChart.data.datasets[1].data = monthlyChartData.revenueData;
+                    myChart.data.datasets[2].data = monthlyChartData.productsData;
+                }
+
+                myChart.options.scales.x.title.text = (filter === 'yearly') ? 'Year' : 'Month';
+                myChart.update(); // Update the chart with new data
+            });
+    }
+
+    // Event listeners for filter buttons
+    document.getElementById('yearlyBtn').addEventListener('click', () => updateChartData('yearly'));
+    document.getElementById('monthlyBtn').addEventListener('click', () => updateChartData('monthly'));
+
+    // Display the chart with yearly data by default
+    updateChartData('yearly');
+</script> 

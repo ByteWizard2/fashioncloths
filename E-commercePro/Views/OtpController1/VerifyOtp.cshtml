@@ -1,0 +1,156 @@
+﻿ @model OtpDetails
+
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - E_commercePro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/E_commercePro.styles.css" asp-append-version="true" />
+</head>
+<body>
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 ">
+            <div class="card">
+                <div class="card-header bg-primary-subtle">
+                    <h5 class="card-title text-center ">Enter OTP</h5>
+                        @if (ViewBag.ErrorMessage != null)
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @ViewBag.ErrorMessage
+                            </div>
+                        }
+                        @TempData["success"]
+                </div>
+                <div class="card-body m-5 ">
+                        <form asp-action="VerifyOTP" method="post" >
+
+                        <div class="d-flex">
+                            <input type="hidden" class="form-control p-3" id="userid" name="userId" value="@ViewBag.Email">
+                            <div class="form-group me-2 p-2">
+                                <input type="text" class="form-control p-3 otp-input" id="otp1" name="otp1" maxlength="1" required>
+                            </div>
+                            <div class="form-group me-2 p-2">
+                                <input type="text" class="form-control p-3 otp-input" id="otp2" name="otp2" maxlength="1" required>
+                            </div>
+                            <div class="form-group me-2 p-2">
+                                <input type="text" class="form-control p-3 otp-input" id="otp3" name="otp3" maxlength="1" required>
+                            </div>
+                            <div class="form-group me-2 p-2">
+                                <input type="text" class="form-control p-3 otp-input" id="otp4" name="otp4" maxlength="1" required>
+                            </div>
+                            <div class="form-group me-2 p-2">
+                                <input type="text" class="form-control p-3 otp-input" id="otp5" name="otp5" maxlength="1" required>
+                            </div>
+                            <div class="form-group p-2">
+                                <input type="text" class="form-control p-3 otp-input" id="otp6" name="otp6" maxlength="1" required>
+                            </div>
+                        </div>
+                            <div class="  d-flex justify-content-center mt-3">
+                                <input type="hidden" name="email" value="@ViewBag.Email" />
+                                <button  type="submit" class="btn btn-primary">Submit OTP</button>
+                        </div>
+                            
+                    </form>
+                        <form method="post" asp-action="ResendOTP" asp-controller="ResndOtp">
+
+                            <div class="d-flex justify-content-center ">
+                                <p id="resendTimer">Resend OTP in <span id="timer">60</span> seconds</p>
+                            </div>
+                            <p class="small fw-bold mt-2 pt-1 mb-0">
+                                Not received your code ?
+                                <input type="hidden" name="email" value="@ViewBag.Email" />
+                                <button id="resendLink" type="submit" class="btn btn-link" style="display:none;">Resend OTP</button>
+                            </p>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        window.onload = function () {
+            var countDownDate = new Date().getTime() + 60000; // 1 minute timer
+
+            var x = setInterval(function () {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("timer").innerHTML = "EXPIRED";
+                    document.getElementById("resendLink").style.display = "inline"; // Show the resend link
+                } else {
+                    document.getElementById("resendLink").style.display = "none"; // Hide the resend link
+                }
+            }, 1000);
+        };
+    </script>
+    <script>
+        window.onload = function () {
+            // 1. Set up the timer
+            var countDownDate = new Date().getTime() + 60000; // 1 minute timer
+
+            var timerInterval = setInterval(function () {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
+
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById("timer").innerHTML = "EXPIRED";
+                    document.getElementById("resendLink").style.display = "inline"; // Show the resend link
+                } else {
+                    document.getElementById("resendLink").style.display = "none"; // Hide the resend link
+                }
+            }, 1000);
+
+            // 2. Get all OTP input fields and handle focus and backspace
+            var otpInputs = document.querySelectorAll('.otp-input');
+
+            otpInputs.forEach(function (input, index, arr) {
+                input.addEventListener('input', function () {
+                    // Automatically focus on the next input field
+                    if (index < arr.length - 1 && input.value.length === input.maxLength) {
+                        arr[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', function (e) {
+                    // Check if backspace key is pressed and the input is empty
+                    if (e.key === 'Backspace' && input.value.length === 0) {
+                        // Prevent the default backspace behavior (going back in history)
+                        e.preventDefault();
+
+                        // Move the focus to the previous input field
+                        if (index > 0) {
+                            arr[index - 1].focus();
+                        }
+                    }
+                });
+            });
+        };
+    </script>
+
+
+</body>
+</html>

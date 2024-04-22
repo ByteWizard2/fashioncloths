@@ -1,0 +1,131 @@
+﻿@model List<Offer>
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+<body>
+    <div class="screen-overlay"></div>
+    <main class="">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Offers</h2>
+                    <p>Add, edit or delete a Offer</p>
+                </div>
+                <div>
+                    <a asp-action="AddOffer" class="btn btn-primary" id="addCouponForm">Add Offer</a>
+                </div>
+            </div>
+
+            @foreach (var off in Model)
+            {
+                <div class="card mb-4">
+                    <div class="card-header bg-brand-2" style="height: 150px"></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl col-lg flex-grow-0" style="flex-basis: 230px">
+                                <div class="img-thumbnail shadow w-100 bg-white position-relative text-center" style="height: 190px; width: 200px; margin-top: -120px">
+                                    <img src="@off.banner" class="center-xy img-fluid" alt="Logo Brand" />
+                                </div>
+                            </div>
+                            <!--  col.// -->
+                            <div class="col-xl col-lg">
+                                <h3>@off.name</h3>
+                                <p>@off.description</p>
+                            </div>
+                            <!--  col.// -->
+                            <div class="col-xl-4 text-md-end">
+                                <a asp-action="OfferEdit" asp-route-id="@off.Id" class="btn btn-primary editButton">Edit</a>
+                                <button onclick="deleteOffer(@off.Id)" class="btn btn-danger deleteButton"><i class="material-icons md-delete_forever"></i>Delete</button>
+                                
+
+                            </div>
+                            <!--  col.// -->
+                        </div>
+                        <!-- card-body.// -->
+                        <hr class="my-4" />
+                        <div class="row g-4">
+                            <div class="col-md-12 col-lg-4 col-xl-2">
+                                <article class="box">
+                                    <p class="mb-0 text-muted">Discount percentage:</p>
+                                    <h5 class="text-success">@off.discount</h5>
+
+                                </article>
+                            </div>
+                            <!--  col.// -->
+                            <div class="col-sm-6 col-lg-4 col-xl-3">
+                                <h6>Category</h6>
+                                <p>
+                                    @off.category.Name
+                                </p>
+                            </div>
+                            <!--  col.// -->
+                            <div class="col-sm-6 col-lg-4 col-xl-3">
+                                <h6>End Date</h6>
+                                <p>
+                                    @off.expirydate
+                                </p>
+                            </div>
+
+                            <!--  col.// -->
+                        </div>
+                        <!--  row.// -->
+                    </div>
+                    <!--  card-body.// -->
+                </div>
+            }
+            
+            
+
+       
+        </section>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            function deleteOffer(offerId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DeleteOffer", "AdOffer")',
+                            type: 'POST',
+                            data: { id: offerId },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: 'Address deleted successfully.',
+                                    }).then(() => {
+                                        location.reload(); // Reload the page after successful deletion
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Something went wrong!',
+                                    });
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(error);
+                            }
+                        });
+                    }
+                });
+            }
+        </script>
+
+    </main>
+       
+</body>
+ 
+

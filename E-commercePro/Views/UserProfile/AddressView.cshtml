@@ -1,0 +1,94 @@
+﻿@model List<E_commercePro.Models.Address>
+@{
+    Layout = "~/Views/Shared/_LayoutUserProfile.cshtml";
+}
+
+<body>
+    <div class="screen-overlay"></div>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Address</h2>
+                <div>
+                    <a asp-action="AddAddress" class="btn btn-primary d-flex align-items-center"><i class="material-icons md-plus"></i>Add Address</a>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <!-- Your search and filter options -->
+                </header>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var address in Model)  // Iterate over each address in the model
+                        {
+                            <div class="col-4">
+                                <div class="card">
+                                    <h5 class="card-header">header</h5>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Full Name: <span>@address.fillname</span></h5>
+                                        <p class="card-text">Phone: <span>@address.phone</span></p>
+                                        <p class="card-text">Street: <span>@address.street</span></p>
+                                        <p class="card-text">Locality: <span>@address.locality</span></p>
+                                        <p class="card-text">District: <span>@address.district</span></p>
+                                        <p class="card-text">State: <span>@address.state</span></p>
+                                        <p class="card-text">Pin code: <span>@address.pincode</span></p>
+                                        <div class="d-flex justify-content-center">
+                                            <a asp-action="EditAd" asp-route-id="@address.AddressId" class="btn btn-primary">Edit</a>
+                                            <button onclick="deleteAddress(@address.AddressId)" class="btn btn-danger">Delete</button>
+
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>  
+                </div>
+            </div>
+            <!-- Pagination area -->
+        </section>
+    </main>
+</body>
+
+
+<script>
+    function deleteAddress(addressId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("DeleteAddress", "UserProfile")',
+                    type: 'POST',
+                    data: { id: addressId },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Address deleted successfully.',
+                            }).then(() => {
+                                location.reload(); // Reload the page after successful deletion
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        });
+    }
+</script>

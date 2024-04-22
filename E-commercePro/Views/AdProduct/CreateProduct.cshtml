@@ -1,0 +1,197 @@
+﻿ 
+@model E_commercePro.Models.Product
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+
+
+
+ 
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Product</h2>
+                       
+                    </div>
+                </div>
+                <div class="col-11">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic</h4>
+                        </div>
+                        <div class="card-body">
+                    <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+                                <div class="mb-4">
+                                    <label asp-for="Name" class="form-label">Product title</label>
+                                    <input type="text" asp-for="Name" pattern="[A-Za-z\s]+" title="Please enter only letters" placeholder="Type here" class="form-control" id="name"  />
+                                   <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                              
+                                <div class="mb-4">
+                                    <label asp-for="Description" class="form-label">Full description</label>
+                            <textarea asp-for="Description" placeholder="Type here" class="form-control" rows="4" ></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                                <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="mb-4">
+                                    <label asp-for="CategoryId" class="form-label">Category</label>
+                                              <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.CategoryList">
+                                                <option value="">Select Category</option>
+                                             </select>
+                                    <span asp-validation-for="category" class="text-danger"></span>
+                                     </div>
+                                  </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                           <label class="form-label">Price</label>
+                                    <input asp-for="Price" placeholder="" type="number" class="form-control"  />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <label class="form-label">Stock</label>
+                                <input asp-for="stock" placeholder="" type="text" class="form-control"  />
+                                <span asp-validation-for="stock" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-lg-6">
+                                      <div class="mb-4">
+                                        <label class="form-label"> Color</label>
+                                         <div class="row gx-2">
+                                        <input asp-for="color" placeholder="" type="text" class="form-control" />
+                                        <span asp-validation-for="color" class="text-danger"></span>
+                                         </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                      <div class="mb-4">
+                                         <label class="form-label"> Size</label>
+                                        <div class="row gx-2">
+                                        <input asp-for="Size" placeholder="" type="text" class="form-control"  />
+                                        <span asp-validation-for="Size" class="text-danger"></span>
+                                        </div>
+                                      </div>
+                                    </div>
+                            
+                                </div>
+
+                        
+
+
+
+                        <div class="container mt-4">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Media</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="card-body col-sm-3">
+                                        <div class="input-upload">
+                                            <img src="~/Adassets/imgs/upl/upload1.png" alt="" id="image-preview1" class="preview-image" />
+                                            <input class="form-control" type="file" name="image1" data-id="1"  onchange="handleImageUpload(event, 1)" />
+                                            <button type="button" class="btn btn-sm btn-danger remove-button" data-id="1" style="display: none;">Remove</button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body col-sm-3">
+                                        <div class="input-upload">
+                                            <img src="~/Adassets/imgs/upl/upload1.png" alt="" id="image-preview2" class="preview-image" />
+                                            <input class="form-control" type="file" name="image2" data-id="2"  onchange="handleImageUpload(event, 2)" />
+                                            <button type="button" class="btn btn-sm btn-danger remove-button" data-id="2" style="display: none;">Remove</button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body col-sm-3">
+                                        <div class="input-upload">
+                                            <img src="~/Adassets/imgs/upl/upload1.png" alt="" id="image-preview3" class="preview-image" />
+                                            <input class="form-control" type="file" name="image3" data-id="3"  onchange="handleImageUpload(event, 3)" />
+                                            <button type="button" class="btn btn-sm btn-danger remove-button" data-id="3" style="display: none;">Remove</button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body col-sm-3">
+                                        <div class="input-upload">
+                                            <img src="~/Adassets/imgs/upl/upload1.png" alt="" id="image-preview4" class="preview-image" />
+                                            <input class="form-control" type="file" name="image4" data-id="4"  onchange="handleImageUpload(event, 4)" />
+                                            <button type="button" class="btn btn-sm btn-danger remove-button" data-id="4" style="display: none;">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" id="productVarientButton" class="btn btn-md rounded font-sm hover-up">Add product-Varient</button>
+                        </div>
+
+                    </form>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="col-12">
+                                      
+                </div>
+        
+            </div>
+        </section>
+
+<!-- Cropper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+
+<script>
+   
+    function handleImageUpload(event, id) {
+       
+        var imageInput = event.target;
+        var previewImage = document.getElementById('image-preview' + id);
+        var removeButton = document.querySelector('button[data-id="' + id + '"]');
+        var cropper;
+
+        var file = imageInput.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            // Display the image
+            previewImage.src = e.target.result;
+
+            // Initialize Cropper.js
+            cropper = new Cropper(previewImage, {
+                aspectRatio: 0, // Set the aspect ratio as needed
+                viewMode: 1,
+                crop: function (e) {
+                    // Output the cropped image data
+                    console.log(e.detail.x);
+                    console.log(e.detail.y);
+                    console.log(e.detail.width);
+                    console.log(e.detail.height);
+                    console.log(e.detail.rotate);
+                    console.log(e.detail.scaleX);
+                    console.log(e.detail.scaleY);
+                }
+            });
+
+            // Show the remove button
+            removeButton.style.display = 'inline-block';
+
+            // Add event listener to remove button
+            removeButton.addEventListener('click', function () {
+               
+                // Reset the image preview for this specific image
+                previewImage.src = "~/Adassets/imgs/upl/upload1.png";
+                imageInput.value = '';
+                removeButton.style.display = 'none';
+
+                // Destroy the Cropper instance for this specific image
+                cropper.destroy();
+            });
+        }
+
+        reader.readAsDataURL(file);
+    }
+
+
+
+</script>

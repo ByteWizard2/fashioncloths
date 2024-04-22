@@ -1,0 +1,37 @@
+﻿@model E_commercePro.Models.category
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+<div class="card-body col-6">
+    <div class="table-responsive">
+        <h2 class="content-title pt-3 pb-5 ">Delete  Category </h2>
+        <br />
+        <table class="table table-hover ">
+           
+            <form method="post" asp-action="DeletePost">
+                <input asp-for="Id" hidden />
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input type="text" asp-for="Name" disabled placeholder="Enter username" class="form-control" autocomplete="off" />
+                 
+                </div>
+                <br />
+
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <input type="text" asp-for="Description" disabled placeholder="Enter username" class="form-control" autocomplete="off" />
+             
+                </div>
+                <br />
+                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4 m-2">
+                    <button type="submit" class="btn btn-danger btn-lg m-2">Delete</button>
+
+                    <button asp-controller="Adcategory" asp-action="Categorylist" type="submit" class="btn btn-secondary btn-lg m-2">Close</button>
+                </div>
+            </form>
+        </table>
+    </div>
+</div>

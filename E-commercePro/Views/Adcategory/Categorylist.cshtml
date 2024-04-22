@@ -1,0 +1,131 @@
+﻿ @model List<E_commercePro.Models.category>
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+}
+
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Category list</h2>
+
+        @* Category create modal *@
+        <div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever=""><i class="material-icons md-plus"></i> Create new </button>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Create Category</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" asp-action="CreateCategory" asp-controller="Adcategory">
+                                <div class="mb-3">
+                                    <label for="Name" class="col-form-label">Name:</label>
+                                    <input type="text" class="form-control" id="Name" name="Name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Description" class="col-form-label">Description:</label>
+                                    <textarea class="form-control" id="Description" name="Description"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Display error messages if any *@
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    @error.ErrorMessage<br />
+                }
+            }
+        </div>
+    }
+
+    @* Display category list if available *@
+    @if (Model != null && Model.Any())
+    {
+        <div class="card mb-4">
+            <header class="card-header">
+                <div class="row gx-3">
+                    <div class="col-lg-4 col-md-6 me-auto">
+                        <input type="text" placeholder="Search..." id="txtSearch" class="form-control" />
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-6">
+                        <select class="form-select">
+                            <option>Status</option>
+                            <option>Active</option>
+                            <option>Disabled</option>
+                            <option>Show all</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-6">
+                        <select class="form-select">
+                            <option>Show 20</option>
+                            <option>Show 30</option>
+                            <option>Show 40</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var obj in Model.OrderBy(u => u.Description))
+                            {
+                                <tr>
+                                    <td>@obj.Name</td>
+                                    <td>@obj.Description</td>
+
+                                    <td class="text-end">
+                                        <div class="w-10 h-25 btn-group" role="group">
+
+                                       @*     <a asp-controller="Adcategory" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-sm btn-brand rounded font-sm mt-15">
+                                               <i class="material-icons md-plus"></i> Edit
+                                           </a> *@
+                                            <a asp-controller="Adcategory" asp-action="Edit" asp-route-id="@obj.Id" class="btn  btn-brand rounded font-sm mt-15  ">
+                                                <i class="bi bi-pencil-square">Edit</i>
+                                            </a>
+                                        
+                                           <form asp-action="ToggleList" asp-controller="Adcategory" method="post">
+                                               <input type="hidden" name="Id" value="@obj.Id" />
+                                                <button type="submit" class="btn btn-@(obj.IsListed ? "warning" : "success") btn-sm rounded font-sm mt-15 ">
+                                                  <i class="material-icons md-@(obj.IsListed ? "minus" : "plus")"></i> @(obj.IsListed ? "Unlist" : "List")
+                                              </button>
+                                           </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>No categories found.</p>
+    }
+</section>

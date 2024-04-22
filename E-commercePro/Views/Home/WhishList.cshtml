@@ -1,0 +1,121 @@
+﻿@model IEnumerable<E_commercePro.Models.Product>
+
+<head>
+    <style>
+        /* Notification styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 40%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <div class="section-title">
+                    <h4>Wishlist</h4>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-8">
+                <ul class="filter__controls">
+                    <li class="active" data-filter="*">All</li>
+                    <li data-filter=".Womens">Women’s</li>
+                    <li data-filter=".Mens">Men’s</li>
+                    <li data-filter=".Kids">Kid’s</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row property__gallery">
+            @if (Model.Any())
+            {
+                foreach (var product in Model)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 mix prodDetailsDiv" data-prodid="@product.Id">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg" >@* data-setbg="@Url.Content(product.ImageUrls.FirstOrDefault())"> *@
+                                <a href="#" onclick="event.preventDefault(); window.location.href = '@Url.Action("ProductDetails", "Home", new { id = product.Id })';">
+                                    <img src="@Url.Content(product.ImageUrls.FirstOrDefault())" class="card-img-top" alt="Product Image">
+
+                                </a>
+                                <ul class="product__hover">
+                                    <li>
+                                        <a href="#" class="removeWishlist" data-id="@product.Id">
+                                            <span class="icon_close_alt"></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6><a href="#">@product.Name</a></h6>
+                                <div class="rating">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
+                                <div class="product__price">₹ @product.Price</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <h4 class="text-center text-danger">Your wishlist is empty. Fill your bag.!!</h4>
+            }
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+</section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.removeWishlist').click(function (e) {
+            e.preventDefault(); // Prevent the default action of clicking a link
+
+            var productId = $(this).data('id');
+
+            // Send an AJAX request to remove the item from the wishlist
+            $.ajax({
+                url: '/Home/RemoveFromWishlist',
+                type: 'POST',
+                data: { id: productId }, // Pass the product ID in the request body
+                success: function (result) {
+                    // Remove the product element from the view
+                    $('[data-prodid="' + productId + '"]').closest('.prodDetailsDiv').remove();
+
+                    // Show a success notification
+                    showNotification("Item removed from wishlist");
+                },
+                error: function (xhr, status, error) {
+                    console.error(error); // Log the error
+                    // Show an error notification
+                    showNotification("Failed to remove item from wishlist", true);
+                }
+            });
+        });
+
+        function showNotification(message, isError = false) {
+            var notification = $('#notification');
+            notification.text(message);
+            if (isError) {
+                notification.css('background-color', '#FF5733'); // Set color for error notification
+            } else {
+                notification.css('background-color', '#4CAF50'); // Set color for success notification
+            }
+            notification.fadeIn().delay(2000).fadeOut(); // Show notification for 2 seconds
+        }
+    });
+</script>
+

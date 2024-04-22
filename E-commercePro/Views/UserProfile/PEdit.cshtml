@@ -1,0 +1,97 @@
+﻿ @model E_commercePro.Models.UserSignUp
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutUserProfile.cshtml";
+}
+
+<head>
+    <style>
+        /* Notification styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 40%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="screen-overlay"></div>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Profile</h2>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row gx-5">
+                        <div class="col-lg-12">
+                            <section class="content-body p-xl-4">
+                               <form asp-action="PEdit" method="post">
+                                <input type="hidden" asp-for="ID" />
+                                <input type="hidden" asp-for="Password" />
+                                <input type="hidden" asp-for="ConformPassword" />
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <div class="row gx-3">
+                                            <div class="col-lg-12 mb-3">
+                                                <label asp-for="Name" class="form-label">Name </label>
+                                                <input asp-for="Name" class="form-control" type="text" id="name"  />
+                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                            </div>
+                                            <!-- col .// -->
+                                            <div class="col-6 mb-3">
+                                                <label asp-for="UserName" class="form-label">User Name</label>
+                                                <input asp-for="UserName" class="form-control" type="text" placeholder="Type here" id="username"  />
+                                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                            </div>
+                                            <!-- col .// -->
+                                            <div class="col-lg-6 mb-3">
+                                                <label asp-for="Email" class="form-label">Email</label>
+                                                <input asp-for="Email" class="form-control" type="email" id="email" />
+                                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                            </div>
+                                            <!-- col .// -->
+                                            <div class="col-lg-6 mb-3">
+                                                <label asp-for="Phone" class="form-label">Phone</label>
+                                                <input asp-for="Phone" class="form-control" type="tel"  />
+                                                <span asp-validation-for="Phone" class="text-danger"></span>
+                                            </div>
+
+                                        </div>
+                                        <!-- row.// -->
+                                    </div>
+                                </div>
+                                <!-- row.// -->
+                                <br />
+                                    <button type="submit"  class="btn btn-sm rounded font-sm hover-up">Save</button>
+
+                              </form>
+
+                                <!-- col.// -->
+
+                                
+                                <!-- row.// -->
+                            </section>
+                            <!-- content-body .// -->
+                        </div>
+                        <!-- col.// -->
+                    </div>
+                    <!-- row.// -->
+                </div>
+                <!-- card body end// -->
+            </div>
+            <!-- card end// -->
+        </section>
+        <div id="notification" class="notification"></div>
+        <!-- content-main end// -->
+
+
+
+</body>

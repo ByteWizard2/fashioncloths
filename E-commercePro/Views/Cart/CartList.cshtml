@@ -1,0 +1,373 @@
+﻿@model E_commercePro.ViewModel.CartListVM
+
+
+<body>
+    <div id="alertContainer"></div>
+    @if (Model.productList.Count() > 0)
+    {
+
+        <section class="shop-cart spad col-11">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="shop__cart__table">
+                            <table class="text-center">
+                                <thead style="background-color: #e5aa3b;">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.productList)
+                                    {
+                                        <tr>
+                                            <td class="cart__product__item text-start">
+                                                <img width="70px" height="80px" src="@item.Product.ImageUrls.FirstOrDefault()" alt="Product Image">
+                                                <div class="cart__product__item__title">
+                                                    <h6>@item.Product.Name</h6>
+                                                </div>
+                                            </td>
+                                            <td id="price_@item.Product.Id" class="cart_price">
+                                                <div class="product__details__price mb-0">
+                                                    <h4>₹ @item.Product.Price</h4>
+                                                </div>
+                                            </td>
+                                            <td style="width: 7rem;" class="cart__quantity">
+                                                <div class="input-group quantity">
+                                                    <button class="btn btn-light dec qtybtn" type="button">-</button>
+                                                    <input id="quantity_@item.Product.Id" type="text" class="form-control quantity-input border-0 text-center" data-id="@item.Product.Id" value="@item.Quantity" min="1" disabled>
+                                                    <button class="btn btn-light inc qtybtn" type="button">+</button>
+                                                </div>
+                                            </td>
+                                            <td id="carttotal_@item.Product.Id" class="cart_total">
+                                                <div class="product__details__price mb-0 cart_total"><h4>₹ @(item.Quantity * item.Product.Price)</h4></div>
+                                            </td>
+                                            <td class="cart__close deleteCartBut" data-id="@item.Product.Id"><span class="icon_close"></span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="cart__btn">
+                            <a href="/api/v1/products/list/all">Continue Shopping</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="cart__btn update__btn">
+                            <a href="/api/v1/users/cart"><span class="icon_loading"></span> Update cart</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <div class="discount__content">
+                            <h6>Apply Coupons</h6>
+                            <form class="w-100 mt-3">
+                                <input type="text" id="selectedCouponCode"  placeholder="Enter your coupon code">
+                                <button type="button" id="showCouponButton" class="site-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Show available coupons
+                                </button>
+                                <button type="button" class="site-btn d-none" id="removeCouponButton">Remove Coupon</button>
+                            </form>
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Available Coupons</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="couponList">
+                                            @foreach (var coupon in Model.coupon)
+                                            {
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="couponRadio" id="coupon-@coupon.Id" value="@coupon.Code">
+                                                    <label class="form-check-label" for="coupon-@coupon.Id">
+                                                        Name: @coupon.Name<br>
+                                                        Code: @coupon.Code<br>
+                                                        Description: @coupon.Description
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button id="applyCouponBtn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Apply</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 offset-lg-2">
+                        <div class="cart__total__procced">
+                            <h6 class="text-center">Cart total</h6>
+                            <ul>
+                                <li>Subtotal <span id="subtotal">@Model.Subtotal</span></li>
+                                <li>Total discount <span id="discount">0</span></li>
+                                <li id="total">Total <span id="grandtotal">@Model.TotalPrice</span></li>
+                            </ul>
+                            <!-- Proceed to checkout form -->
+
+                            <input type="hidden" id="" name="" value="">
+                            <a asp-controller="Order" asp-action="OrderView" type="submit" class="primary-btn border-0 w-100">Proceed to checkout</a>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Function to handle quantity increase
+                $('.inc').click(function () {
+                    updateCartItemQuantity($(this), 1);
+                });
+
+                // Function to handle quantity decrease
+                $('.dec').click(function () {
+                    updateCartItemQuantity($(this), -1);
+
+
+                });
+
+                //update cartquantity 
+                function updateCartItemQuantity(button, change) {
+                    var input = button.siblings('input[type="text"]');
+                    var productId = input.data('id');
+                    var newQuantity = parseInt(input.val()) + change;
+
+                    // Prevent negative quantities
+                    if (newQuantity < 1) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/Cart/UpdateCartItemQuantity',
+                        type: 'POST',
+                        data: { productId: productId, quantity: newQuantity },
+                        success: function (result) {
+                            // Update the quantity displayed in the UI
+                            input.val(newQuantity);
+                            // Update total price for the current product
+                            updateTotalPrice(productId, newQuantity);
+                            // Update subtotal and discount after changing quantity
+                            updateSubtotal();
+                            // Check subtotal and coupon minimum amount after changing quantity
+                            checkSubtotalAndCouponMinAmount();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error); // Log error if needed
+                        }
+                    });
+                }
+
+
+                //check subtotal and coupn min amount
+                function checkSubtotalAndCouponMinAmount() {
+                    $.ajax({
+                        url: '/Cart/CheckSubtotalAndCouponMinAmount',
+                        type: 'GET',
+                        success: function (response) {
+                            if (!response.success) {
+                                // Reset discount and clear coupon code
+                                $('#discount').text('₹ 0');
+                                $('#selectedCouponCode').val('');
+                                $('#showCouponButton').text('Show available coupons');
+                                $('#removeCouponButton').addClass('d-none');
+                                // Update the subtotal and total after resetting the discount
+                                updateSubtotal();
+
+                                // Show a Bootstrap alert with the message
+                                var alertHtml = '<div class="alert alert-warning alert-dismissible fade show" role="alert">';
+                                alertHtml += '<strong>Alert:</strong> ' + response.message;
+                                alertHtml += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+                                alertHtml += '</div>';
+                                $('#alertContainer').html(alertHtml);
+
+                                // Dismiss the alert after 5 seconds
+                                setTimeout(function () {
+                                    $('.alert').alert('close');
+                                }, 5000);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error); // Log error if needed
+                        }
+                    });
+                }
+
+
+
+
+                // Function to update total price for a product
+                function updateTotalPrice(productId, newQuantity) {
+                    var price = parseFloat($('#price_' + productId).text().replace('₹', '').trim());
+                    var totalPrice = newQuantity * price;
+                    // Update the total price for the current product
+                    $('#carttotal_' + productId).find('.cart_total').text('₹ ' + totalPrice);
+                    
+                    updateSubtotal();
+                }
+
+                //update subtotal
+                function updateSubtotal() {
+                    var subtotal = 0;
+                    $('.cart_total').each(function () {
+                        subtotal += parseFloat($(this).text().replace('₹', '').trim());
+                    });
+
+                    var discount = parseFloat($('#discount').text().replace('₹', '').trim());
+                    var minAmount = parseFloat($('#minAmount').text().replace('₹', '').trim());
+
+                    // Check if subtotal is less than the minimum amount required for the coupon
+                    if (subtotal < minAmount) {
+                        // If subtotal is less than minimum amount, reset discount and update UI
+                        $('#discount').text('₹ 0');
+                        $('#grandtotal').text('₹ ' + (subtotal));
+                        showErrorAlert('Subtotal is less than the minimum amount required for this coupon.');
+                        return;
+                    }
+
+                    var total = (subtotal / 2) - discount;
+
+                    $('#subtotal').text('₹ ' + subtotal / 2);
+                    $('#discount').text('₹ ' + discount);
+                    $('#grandtotal').text('₹ ' + total);
+                }
+
+
+
+                // Function to handle deleting cart items
+                $('.deleteCartBut').click(function () {
+                    var productId = $(this).data('id');
+                    deleteCartItem(productId);
+                });
+
+                // Function to delete cart item
+                function deleteCartItem(productId) {
+                    $.ajax({
+                        url: '/Cart/DeleteCartItem',
+                        type: 'POST',
+                        data: { productId: productId },
+                        success: function (result) {
+                            // Reload or update the cart view
+                            window.location.reload(); // For example, you can reload the page
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error); // Log error if needed
+                        }
+                    });
+                }
+
+                // Function to apply coupon
+                $('#applyCouponBtn').click(function () {
+                    var selectedCouponCode = $('input[name="couponRadio"]:checked').val();
+                    applyCoupon(selectedCouponCode);
+                });
+
+                function applyCoupon(couponCode) {
+                    $.ajax({
+                        url: '/Cart/ApplyCoupon',
+                        type: 'POST',
+                        data: { couponCode: couponCode },
+                        success: function (response) {
+                            if (response.success) {
+                                var discountAmount = response.discount;
+                                $('#discount').text('₹ ' + discountAmount);
+                                updateSubtotal();
+                                $('#selectedCouponCode').val(couponCode);
+                                $('#showCouponButton').text('Remove Coupon');
+                                $('#removeCouponButton').removeClass('d-none');
+                            } else {
+                                showErrorAlert(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            showErrorAlert('An error occurred while applying the coupon. Please try again later.');
+                            console.error(error);
+                        }
+                    });
+                }
+
+
+                $('#removeCouponButton').click(function () {
+                    removeCoupon();
+                });
+
+                
+                // Function to remove the coupon via AJAX
+                function removeCoupon() {
+                    $.ajax({
+                        url: '/Cart/RemoveCoupon',
+                        type: 'POST',
+                        success: function (response) {
+                            if (response.success) {
+                                // Reset the UI elements
+                                $('#discount').text('₹ 0');
+                                $('#selectedCouponCode').val('');
+                                $('#showCouponButton').text('Show available coupons');
+                                $('#removeCouponButton').addClass('d-none');
+                                updateSubtotal();
+                            } else {
+                                showErrorAlert(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            showErrorAlert('An error occurred while removing the coupon. Please try again later.');
+                            console.error(error);
+                        }
+                    });
+                }
+
+                // Function to display error alert
+                function showErrorAlert(message) {
+            
+                    var alertHtml = '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+                    alertHtml += '<strong>Error:</strong> ' + message;
+                    alertHtml += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+                    alertHtml += '</div>';
+
+              
+                    $('body').prepend(alertHtml);
+
+                
+                    setTimeout(function () {
+                        $('.alert').alert('close');
+                    }, 5000);
+                }
+            });
+
+
+
+        </script>
+
+
+
+    }
+    else
+    {
+        <br />
+        <br />
+        <br />
+
+        <p class="text-center ">Your cart is empty please add items to the cart.</p>
+
+    }
+</body>
+
+

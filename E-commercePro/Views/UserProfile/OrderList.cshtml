@@ -1,0 +1,153 @@
+﻿@model E_commercePro.ViewModel.OrderListViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutUserProfile.cshtml";
+}
+
+
+
+
+<head>
+    <style>
+        /* Notification styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 40%;
+            background-color: #f51010;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="screen-overlay"></div>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Your Orders</h2>
+                    <p>Recent Orders</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search order ID" class="form-control bg-white" />
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header style="background-color: #d8f1e5;" class="card-header">
+                    <div class="row gx-3">
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            <input type="text" placeholder="Search..." class="form-control" />
+                        </div>
+                         <div class="col-lg-2 col-6 col-md-3">
+                            <select class="form-select">
+                                <option>Status</option>
+                                <option>Active</option>
+                                <option>Disabled</option>
+                                <option>Show all</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-6 col-md-3">
+                            <select class="form-select">
+                                <option>Show 20</option>
+                                <option>Show 30</option>
+                                <option>Show 40</option>
+                            </select>
+                        </div> 
+                    </div>
+                </header>
+                @foreach (var order in Model.Orders)
+                {
+                    <div class="card">
+                        <div style="background-color: #d8f1e5;" class="card-header">
+                            <div class="row">
+                                <div class="col-4">
+                                    OrderId: <b>@order.Order.Id</b> <br> Date: <b>@order.Order.OrderDate</b>
+                                </div>
+                                <div class="col-4">
+                                    Total: <b>₹@order.Order.OrderAmount</b> <br> Status: <b><span class="badge rounded-pill me-2" style="background-color: cornflowerblue;">@order.Order.Status</span></b>
+                                </div>
+                                <div class="col-4 d-flex justify-content-between   align-items-center ">
+                                    Shipped to:<span class="badge rounded-pill me-2" style="background-color: green;">@order.Address.fillname</span>
+                                </div>
+                            </div>
+                        </div>
+                        @foreach (var orderedItem in order.OrderedItems)
+                        {
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-2 ">
+                                        <img src="@orderedItem.Product.ImageUrls[0]" width="80" height="80" class="img-md" alt="Item" />
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="row">
+                                            <div class="col-10">
+                                                <h5 class="card-title">@orderedItem.Product.Name</h5>
+                                            </div>
+                                            <div class="col-2">
+                                                <h5 class="card-title">@orderedItem.Quantity</h5>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                @* <p class="card-text">@orderedItem.</p> *@
+                                            </div>
+                                            <div class="col-4">
+                                                <p class="card-text">@orderedItem.Product.Size</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <p class="card-text">@orderedItem.Product.color</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                    </div>
+                                 
+                                </div>
+                            </div>
+                            
+                        
+                        }
+
+
+
+
+                        <div class="row  mb-3 ">
+                            <div class="col-lg-12 d-flex justify-content-center  ">
+                                @if (order.IsReturnPeriod)
+                                {
+                                    <form action="@Url.Action("Return", new { id = order.Order.Id })" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-secondary returnButton me-3">Return</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form action="@Url.Action("CancelOrder", new { id = order.Order.Id })" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger cancelButton me-3">Cancel</button>
+                                    </form>
+                                }
+                                <a href="@Url.Action("OrderDetails",  new { id = order.Order.Id })" class="btn btn-success detailsButton">Details</a>
+                            </div>
+                        </div>  
+                    </div>
+                    
+                }
+
+
+
+            </div>
+           
+        </section>
+        <div id="notification" class="notification"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+</body>

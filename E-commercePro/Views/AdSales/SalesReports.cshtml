@@ -1,0 +1,248 @@
+﻿@model IEnumerable<E_commercePro.Models.OrderE>
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+    var totalPages = ViewBag.TotalPages;
+    var currentPage = ViewBag.CurrentPage;
+}
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+    <div class="screen-overlay"></div>
+
+    <main class="">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Sales Report</h2>
+                    <p>Whole data about your business is here</p>
+                </div>
+            </div>
+            <!-- In your SalesReports.cshtml view -->
+
+            
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="card mb-4">
+                        <header class="card-header">
+                            <div class="row gx-3">
+                                <div class="col-lg-4 col-md-6 me-auto">
+                                    <input type="text" placeholder="Search..." class="form-control" />
+                                </div>
+                                <div class="col-lg-8 col-md-6 text-end">
+
+
+                                    <a href="@Url.Action("ExportAllSalesReports", "AdSales")" class="btn btn-primary">Download All Sales Reports as PDF</a>
+
+
+                             
+
+                                    <a href="@Url.Action("ExportToExcel", "AdSales")" class="btn btn-primary">Download as Excel</a>
+                                </div>
+                            </div>
+                        </header>
+                        <!-- card-header end// -->
+                        <div class="invoice">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <th>Customer name</th>
+                                                <th>Price</th>
+                                                <th>Coupon</th>
+                                                <th>Discount</th>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th class="text-end">Payment Mode</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tableBody">
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td>@item.Id</td>
+                                                    <td><b>@item.UserSignUp.Name</b></td>
+                                                    <td>@item.OrderAmount</td>
+                                                    <td>@item.CouponCod</td>
+                                                    <td>@item.Amount</td>
+                                                    <td>@item.OrderDate</td>
+                                                    <td><span class="badge rounded-pill alert-success">@item.Status</span></td>
+                                                    <td class="text-center">@item.PaymentMethod</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="2" class="text-end"><b>Total</b></td>
+                                                <td id="totalAmount"><b></b></td>
+                                                <td class="text-end"><b>Total discount</b></td>
+                                                <td id="totalDiscount"><b></b></td>
+                                                <td colspan="2" class="text-end"><b>Total Sales</b></td>
+                                                <td id="totalSalesCount"><b></b></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <!-- table-responsive //end -->
+                            </div>
+                        </div>
+                        <!-- card-body end// -->
+                    </div>
+                    <!-- card end// -->
+                    <div class="d-flex justify-content-center">
+                        <div class="pagination-area mt-15 mb-50">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-start">
+                                    @if (currentPage > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?pageNumber=@(currentPage - 1)">
+                                                <i class="material-icons md-chevron_left"></i>
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @for (int i = 1; i <= totalPages; i++)
+                                    {
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <a class="page-link" href="?pageNumber=@i">@i</a>
+                                        </li>
+                                    }
+
+                                    @if (currentPage < totalPages)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?pageNumber=@(currentPage + 1)">
+                                                <i class="material-icons md-chevron_right"></i>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">Filter by</h5>
+                            <form asp-action="SalesReports" method="get">
+                                <div class="mb-4">
+                                    <label for="filterType" class="form-label">Filter Type</label>
+                                    <select id="filterType" name="filterType" class="form-control">
+                                        <option value="">All</option>
+                                        <option value="yearly">Yearly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="daily">Daily</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="fromDate" class="form-label">From</label>
+                                    <input type="date" id="fromDate" name="fromDate" class="form-control" />
+                                </div>
+                                <div class="mb-2 text-center">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- card end// -->
+                </div>
+            </div>
+        </section>
+        <!-- content-main end// -->
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#exportPdf').on('click', function () {
+                const element = document.querySelector('.invoice');
+                const opt = {
+                    margin: 10,
+                    filename: 'sales_report.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all'] }
+                };
+                html2pdf().set(opt).from(element).toPdf().save();
+            });
+        });
+
+        
+
+
+            function calculateTotal() {
+                const orders = document.querySelectorAll('#tableBody tr');
+                let totalAmount = 0;
+                let totalDiscount = 0;
+                let totalSalesCount = orders.length;
+
+                orders.forEach(order => {
+                    const price = parseFloat(order.cells[2].textContent);
+                    const discount = parseFloat(order.cells[4].textContent);
+
+                    totalAmount += price;
+                    totalDiscount += discount;
+                });
+
+                document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+                document.getElementById('totalDiscount').textContent = totalDiscount.toFixed(2);
+                document.getElementById('totalSalesCount').textContent = totalSalesCount;
+            }
+
+        calculateTotal();
+
+        function formatDate(isoDate) {
+            const date = new Date(isoDate);
+            const day = ('0' + date.getDate()).slice(-2);
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Function to update the table with data and handle no items message
+        function updateTable(orders) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            if (orders.length === 0) {
+                document.getElementById('noItemsMessage').style.display = 'block';
+            } else {
+                document.getElementById('noItemsMessage').style.display = 'none';
+
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                                            <td>${order.Id}</td>
+                                            <td><b>${order.UserSignUp.Name}</b></td>
+                                            <td>${order.OrderAmount}</td>
+                                            <td>${order.CouponCod}</td>
+                                            <td>${order.Amount}</td>
+                                            <td>${order.OrderDate}</td>
+                                            <td><span class="badge rounded-pill alert-success">${order.Status}</span></td>
+                                            <td class="text-center">${order.PaymentMethod}</td>
+                                        `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            // Update total calculations
+            calculateTotal();
+        }
+    </script>
+</body>
+
+   
+
+   
+
+

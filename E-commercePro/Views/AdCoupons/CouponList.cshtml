@@ -1,0 +1,171 @@
+﻿@model List<E_commercePro.Models.CouponsList>
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutAd.cshtml";
+    var index = 1;
+}
+
+
+
+<head>
+    <style>
+        /* Notification styles */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 40%;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <main class="">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Coupons</h2>
+                    <p>Add, edit or delete a Coupon</p>
+                </div>
+                <div>
+                    <a asp-action="AddCoupon" asp-controller="AdCoupons" class="btn btn-primary">Add Coupon</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="text-center ">
+
+                                            <th>Sl.No</th>
+                                            <th>Name</th>
+                                            <th>Code</th>
+                                            <th>Description</th>
+                                            <th>Discount</th>
+                                            <th>Expiry</th>
+                                            <th>User Limit</th>
+                                            <th>Minimum Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var coupon in Model)
+                                        {
+                                            <tr class="text-center">
+                                                <td>@index</td>
+                                                <td>@coupon.Name</td>
+                                                <td>@coupon.Code</td>
+                                                <td>@coupon.Description</td>
+                                                <td>@coupon.Discount</td>
+                                                <td>@coupon.expiryDate.ToShortDateString()</td>
+                                                <td>@coupon.Userlimit</td>
+                                                <td>@coupon.Minamount</td>
+                                                <td class="text-end">
+                                                    <div>
+                                                        <a id="editbutton" asp-action="EdCoupon" asp-route-id="@coupon.Id" class="btn btn-sm font-sm rounded btn-brand d-inline-block editbutton "> <i class="material-icons md-edit"></i> Edit </a>
+
+                                                        <button onclick="deleteCoupon(@coupon.Id)" class="btn btn-sm font-sm rounded btn-danger">Delete</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            index++;
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- .col// -->
+                    </div>
+                    <!-- .row // -->
+                </div>
+                <!-- card body .// -->
+            </div>
+            <!-- card .// -->
+            <div class="d-flex justify-content-center">
+                <div class="pagination-area mt-15 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+
+                            <li class="page-item">
+                                <a class="page-link d-flex justify-content-center align-items-center">
+                                    <i class="material-icons md-chevron_left"></i>
+                                </a>
+                            </li>
+
+
+
+                            <li class="page-item {{#if (eq this ../currentPage)}}active{{/if}}">
+                                <a class="page-link">1</a>
+                            </li>
+
+
+
+                            <li class="page-item">
+                                <a class="page-link d-flex justify-content-center align-items-center" >
+                                    <i class="material-icons md-chevron_right"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function deleteCoupon(Id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("DelCoupon", "AdCoupons")',
+                    type: 'POST',
+                    data: { id: Id },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Address deleted successfully.',
+                            }).then(() => {
+                                location.reload(); // Reload the page after successful deletion
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        });
+    }
+</script>
+                            
