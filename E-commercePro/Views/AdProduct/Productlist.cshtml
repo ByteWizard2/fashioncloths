@@ -2,8 +2,10 @@
 
 @{
     Layout = "~/Views/Shared/_LayoutAd.cshtml";
-}
 
+    int pageNumber = (int)ViewData["PageNumber"];
+    int totalPages = (int)ViewData["TotalPages"];
+}
 
 <section class="content-main">
 
@@ -29,9 +31,9 @@
                 </div>
                 <div class="col-lg-2 col-md-3 col-6">
                     <select class="form-select">
+                        <option>Show 10</option>
                         <option>Show 20</option>
                         <option>Show 30</option>
-                        <option>Show 40</option>
                     </select>
                 </div>
             </div>
@@ -46,41 +48,28 @@
                             <th>Category</th>
                             <th>Description</th>
                             <th>Price</th>
-                           
-
-                            <th class="text-end ">Action</th>
+                            <th class="text-end">Action</th>
                         </tr>
                     </thead>
                     @foreach (var product in Model)
                     {
                         <tr>
-                            
                             <td>@product.Name</td>
                             <td>@product.category.Name</td>
                             <td>@product.Description</td>
                             <td>@product.Price</td>
-                           @*  <td>@product.islisted</td> *@
-                            
-                            @* <td>@product.stock</td> *@
-
-
-
                             <td class="text-end">
                                 <div class="btn-group" role="group">
-                                    <a asp-controller="AdProduct" asp-action="Edit" asp-route-id="@product.Id" class="btn btn-primary    btn-sm edit-btn rounded font-sm mt-10">
+                                    <a asp-controller="AdProduct" asp-action="Edit" asp-route-id="@product.Id" class="btn btn-primary btn-sm edit-btn rounded font-sm mt-10">
                                         <i class="material-icons md-plus"></i> Edit
                                     </a>
-
                                     <a asp-controller="AdProduct" asp-action="Delete" asp-route-id="@product.Id" class="btn btn-danger btn-sm delete-btn rounded font-sm mt-10">
                                         <i class="material-icons md-delete"></i> Delete
                                     </a>
                                 </div>
                             </td>
-
-
                         </tr>
-
-                    } 
+                    }
                 </table>
                 <!-- table-responsive.// -->
             </div>
@@ -88,21 +77,19 @@
         <!-- card-body end// -->
     </div>
     <!-- card end// -->
-    <div class="pagination-area mt-15 mb-50">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-start">
-                <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                <li class="page-item"><a class="page-link" href="#">02</a></li>
-                <li class="page-item"><a class="page-link" href="#">03</a></li>
-                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                <li class="page-item"><a class="page-link" href="#">16</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                </li>
+
+    <!-- Pagination links -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == pageNumber ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Productlist", new { pageNumber = i })">@i</a>
+                    </li>
+                }
             </ul>
         </nav>
-    </div>
-
-
+    }
 </section>
-

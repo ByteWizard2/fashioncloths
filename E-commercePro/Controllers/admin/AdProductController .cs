@@ -18,19 +18,33 @@ public class AdProductController : Controller
         _db = db;
         _environment = environment;
     }
+    //refer viewmodal
 
-
-    public IActionResult Productlist()
+    public IActionResult Productlist(int? pageNumber)
     {
-        // Filter products to exclude those belonging to listed categories
-    var productList = _db.Products
-                         .Where(p => !p.category.IsListed)
-                         .Include(p => p.category)
-                         .ToList();
+        int pageSize = 10;
+        pageNumber ??= 1;
 
-    return View(productList);
+        // Filter products to exclude those belonging to listed categories
+        var productList = _db.Products
+            .Where(p => !p.category.IsListed)
+            .Include(p => p.category)
+            .ToList();
+
+        var totalProducts = productList.Count();
+        var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+
+        var paginatedProducts = productList.Skip((pageNumber.Value - 1) * pageSize).Take(pageSize).ToList();
+
+        ViewData["PageNumber"] = pageNumber;
+        ViewData["TotalPages"] = totalPages;
+
+        return View(paginatedProducts);
     }
 
+
+
+    //create product
     public IActionResult CreateProduct()
     {
         var listedCategories = _db.Categories.Where(c => !c.IsListed).ToList();
