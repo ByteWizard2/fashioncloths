@@ -19,8 +19,8 @@
                 <div class="card-body">
                     <form asp-action="Edit" method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="Id" />
-                 
-                        
+
+
                         <div class="mb-4">
                             <label asp-for="Name" class="form-label">Product title</label>
                             <input type="text" asp-for="Name" placeholder="Type here" class="form-control" id="name" />
@@ -66,23 +66,27 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row">
                             @for (int i = 0; i < Model.ImageUrls.Count; i++)
                             {
-                                <div class="card-body col-sm-3">
+                                <div class="card-body col-sm-3 image-container">
                                     <div class="input-upload">
                                         <img src="@Model.ImageUrls[i]" alt="Product Image" />
-                                        <input type="hidden" name="existingImageUrls[@i]" asp-for="@Model.ImageUrls[i]" />
+                                        <button type="button" class="btn btn-danger remove-image" data-index="@i">Remove</button>
+                                        <input type="hidden" asp-for="ImageUrls" name="existingImageUrls[@i]" value="@Model.ImageUrls[i]" />
+                                        <!-- Placeholder for the file input -->
+                                        <div id="fileInputPlaceholder-@i" class="file-input-placeholder"></div>
                                     </div>
                                 </div>
                             }
-
-                            @for (int i = 0; i < Model.ImageUrls.Count; i++)
-                            {
-                                <input type="hidden" name="existingImageUrls[@i]" asp-for="@Model.ImageUrls[i]" />
-                            }
                         </div>
+
+
+
+
+
+
+
 
                         <div class="d-flex justify-content-center">
                             <button type="submit" id="productVarientButton" class="btn btn-md rounded font-sm hover-up">Update product-Varient</button>
@@ -95,15 +99,41 @@
         </div>
     </div>
 </section>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function previewImage(input, index) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#image-preview-' + index).attr('src', e.target.result);
+    $(document).ready(function () {
+        // Function to preview image
+        function previewImage(input, index) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    // Create a new image element
+                    var img = $('<img>', { src: e.target.result, alt: "Product Image" });
+                    // Replace the placeholder with the new image element
+                    $('#fileInputPlaceholder-' + index).replaceWith(img);
+                    // Add a remove button for the new image
+                    var removeButton = $('<button>', { type: "button", class: "btn btn-danger remove-image", text: "Remove", 'data-index': index });
+                    img.after(removeButton);
+                }
+                reader.readAsDataURL(input.files[0]);
             }
-            reader.readAsDataURL(input.files[0]);
         }
-    }
+
+        // Event listener for remove button
+        $(document).on('click', '.remove-image', function () {
+            var index = $(this).data('index');
+            // Remove the existing image and its hidden input field
+            $(this).prev('img').remove();
+            $(this).prev('input[type="hidden"]').remove();
+            // Replace the placeholder with a file upload field
+            var fileUploadField = $('<input>', { type: "file", name: "newImages", class: "form-control", onchange: "previewImage(this, " + index + ")" });
+            $('#fileInputPlaceholder-' + index).replaceWith(fileUploadField);
+        });
+
+        // Event listener for file input change
+        $(document).on('change', 'input[type="file"]', function () {
+            var index = $(this).data('index');
+            previewImage(this, index);
+        });
+    });
 </script>

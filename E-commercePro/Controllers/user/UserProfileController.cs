@@ -253,24 +253,23 @@ namespace E_commercePro.Controllers.user
         {
             var userId = HttpContext.Session.GetString("UserId");
             var UserId = Convert.ToInt32(userId);
-
             var orderListViewModel = new OrderListViewModel
             {
                 Orders = await _db.Orders
-                    .Include(o => o.OrderedItems)
-                    .ThenInclude(oi => oi.Product)
-                    .Include(o => o.ShippingAddress)
-                    .Where(o => o.UserId == UserId)
-                    .Select(o => new OrderDetailViewModel
-                    {
-
-                        Order = o,
-                        Product = o.Product,
-                        Address = o.ShippingAddress,
-                        OrderedItems = o.OrderedItems,
-                        IsReturnPeriod = o.Status == Enum.OrderStatus.Delivered
-                    })
-                    .ToListAsync()
+         .Include(o => o.OrderedItems)
+         .ThenInclude(oi => oi.Product)
+         .Include(o => o.ShippingAddress)
+         .Where(o => o.UserId == UserId)
+         .Select(o => new OrderDetailViewModel
+         {
+             Order = o,
+             Product = o.Product,
+             Address = o.ShippingAddress,
+             OrderedItems = o.OrderedItems,
+             IsReturnPeriod = o.Status == Enum.OrderStatus.Delivered,
+             IsOrderCancelled = Helpers.OrderStatusHelper.IsOrderCancelled(o.Status)
+         })
+         .ToListAsync()
             };
 
             return View(orderListViewModel);
@@ -278,21 +277,49 @@ namespace E_commercePro.Controllers.user
 
 
         [HttpPost]
-        public IActionResult CancelOrder(int Id)
+        public async Task<IActionResult> CancelOrder(int Id)
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
                 try
                 {
                     // Retrieve the order
-                    var order = _db.Orders.FirstOrDefault(o => o.Id == Id);
-
+                    var order = await _db.Orders.Include(o => o.UserSignUp).FirstOrDefaultAsync(o => o.Id == Id);
                     if (order != null)
                     {
+                        // Check if the order is paid
+                        if (order.PaymentStatus == Enum.PaymentStatus.Paid)
+                        {
+                            // Get the user's wallet
+                            var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == order.UserId);
+
+                            // Refund the order amount to the wallet
+                            if (wallet != null)
+                            {
+                                wallet.Balance += order.OrderAmount-order.Amount;
+
+                                if (wallet.Transactions == null)
+                                {
+                                    wallet.Transactions = new List<Transaction>(); // Initialize the transactions list
+                                }
+
+                                // Create a new transaction record for the refund
+                                wallet.Transactions.Add(new Transaction
+                                {
+                                    Amount = order.OrderAmount - order.Amount, 
+                                    Type = "Refund",
+                                    OrderDate = DateTime.Now,
+                                    WalletId = wallet.Id,
+                                    statuss = true
+                                });
+
+                                _db.Wallets.Update(wallet);
+                            }
+                        }
+
                         // Update order status to "Cancelled"
                         order.Status = Enum.OrderStatus.Cancelled;
                         _db.Entry(order).State = EntityState.Modified;
-
                         _db.SaveChanges();
                         transaction.Commit();
                     }
@@ -313,22 +340,46 @@ namespace E_commercePro.Controllers.user
         [HttpPost]
         public async Task<IActionResult> ReturnAsync(int id)
         {
-            
-            var order = await _db.Orders.FindAsync(id);
+            var order = await _db.Orders.Include(o => o.UserSignUp).FirstOrDefaultAsync(o => o.Id == id);
             if (order == null)
             {
                 return NotFound();
             }
 
-            // Update the order status to "Return"
-            /* "Return";*/
-            order.Status = Enum.OrderStatus.Returned;
+            if (order.PaymentStatus == Enum.PaymentStatus.Paid)
+            {
+                // Get the user's wallet
+                var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == order.UserId);
 
-            
+                // Refund the order amount to the wallet
+                if (wallet != null)
+                {
+                    wallet.Balance += order.OrderAmount - order.Amount;
+
+                    if (wallet.Transactions == null)
+                    {
+                        wallet.Transactions = new List<Transaction>(); // Initialize the transactions list
+                    }
+
+                    // Create a new transaction record for the refund
+                    wallet.Transactions.Add(new Transaction
+                    {
+                        Amount = order.OrderAmount - order.Amount,
+                        Type = "Refund",
+                        OrderDate = DateTime.Now,
+                        WalletId = wallet.Id,
+                        statuss = true
+                    });
+
+                    _db.Wallets.Update(wallet);
+                }
+            }
+
+            // Update the order status to "Returned"
+            order.Status = Enum.OrderStatus.Returned;
             _db.Orders.Update(order);
             await _db.SaveChangesAsync();
 
-           
             return RedirectToAction("OrderList");
         }
 
@@ -417,20 +468,19 @@ namespace E_commercePro.Controllers.user
         public async Task<IActionResult> WalletView()
         {
             var userId = HttpContext.Session.GetString("UserId");
-
             if (userId != null)
-            {              
+            {
                 var wallet = await _db.Wallets.Include(w => w.Transactions)
-                                             .FirstOrDefaultAsync(w => w.UserId == Convert.ToInt32(userId));
+                    .FirstOrDefaultAsync(w => w.UserId == Convert.ToInt32(userId));
+
                 if (wallet == null)
-                {                    
+                {
                     wallet = new Wallet
                     {
                         UserId = Convert.ToInt32(userId),
-                        Balance = 0, 
-                        Transactions = new List<Transaction>() 
+                        Balance = 0,
+                        Transactions = new List<Transaction>()
                     };
-
                     _db.Wallets.Add(wallet);
                     await _db.SaveChangesAsync();
                 }
@@ -440,6 +490,9 @@ namespace E_commercePro.Controllers.user
 
             return NotFound();
         }
+
+
+
 
 
         [HttpPost]

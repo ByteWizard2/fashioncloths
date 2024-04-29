@@ -134,18 +134,38 @@ public class AdProductController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(Product productModel, string[] existingImageUrls)
+    public async Task<IActionResult> Edit(Product productModel, List<string> existingImageUrls, List<IFormFile> newImages)
     {
         if (ModelState.IsValid)
         {
-            // Update existing image paths
-            productModel.ImageUrls = existingImageUrls.ToList();
+            // Initialize the ImageUrls list with the existing image paths
+            productModel.ImageUrls = new List<string>(existingImageUrls);
+
+            // Get the count of existing images in the database
+            int existingImageCount = productModel.ImageUrls.Count;
+
+            // Process new images
+            if (newImages != null && newImages.Count > 0)
+            {
+                foreach (var image in newImages)
+                {
+                    if (image != null && image.Length > 0)
+                    {
+                        var imagePath = await SaveImage(image); // Implement this method to save the image and return the path
+                        productModel.ImageUrls.Add(imagePath);
+                    }
+                }
+
+                // Calculate the number of existing image paths to remove
+                int imagesToRemove = Math.Max(0, productModel.ImageUrls.Count - existingImageCount);
+
+                // Remove existing image paths based on the count of new images
+                productModel.ImageUrls.RemoveRange(0, imagesToRemove);
+            }
 
             _db.Products.Update(productModel);
             _db.SaveChanges();
-
             TempData["success"] = "Product Update successfully";
-
             return RedirectToAction("Productlist");
         }
 

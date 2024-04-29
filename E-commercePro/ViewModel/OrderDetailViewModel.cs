@@ -9,5 +9,8 @@ namespace E_commercePro.ViewModel
         public Address Address { get; set; }
         public ICollection<OrderedItem> OrderedItems { get; internal set; }
         public bool IsReturnPeriod { get; internal set; }
+
+        public bool IsOrderCancelled { get; set; }
+
     }
 }
