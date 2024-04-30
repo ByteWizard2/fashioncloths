@@ -210,7 +210,7 @@ namespace E_commercePro.Controllers.user
         }
 
 
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> RemoveFromWishlist(int id)
         {
