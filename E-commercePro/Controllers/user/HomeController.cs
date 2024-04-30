@@ -138,6 +138,7 @@ namespace E_commercePro.Controllers.user
             return View(viewModel);
         }
 
+        [AllowAnonymous]
         public IActionResult Logout()
         {
             // Clear authentication cookies
@@ -154,12 +155,12 @@ namespace E_commercePro.Controllers.user
             return RedirectToAction("Login", "User");
         }
 
-       
-      
 
 
 
 
+
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> AddToWishlist(int id)
         {
@@ -192,7 +193,7 @@ namespace E_commercePro.Controllers.user
             return Json(new { message = "Product added to your wishlist." });
         }
 
-
+        [AllowAnonymous]
         public async Task<IActionResult> WhishList()
 
         {

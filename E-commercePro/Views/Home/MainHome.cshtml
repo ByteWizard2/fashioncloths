@@ -178,7 +178,7 @@
                                         </a>
                                      </li>
                                     <li id="wishlist">
-                                        <a href="#" class="add-to-wishlist" data-product-id="@product.Id">
+                                        <a a class="add-to-wishlist" data-product-id="@product.Id">
                                             <span class="icon_heart_alt"></span>
                                         </a>
                                     </li>
@@ -563,8 +563,13 @@
     </script>
 
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
+   
+
+
+</body>
+
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script>
     $(document).ready(function () {
         $('.add-to-wishlist').click(function () {
             var productId = $(this).data('product-id');
@@ -590,9 +595,6 @@
         }
     });
 </script>
-
-
-</body>
 
 
 
