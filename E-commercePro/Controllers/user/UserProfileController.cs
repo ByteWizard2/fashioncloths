@@ -214,6 +214,11 @@ namespace E_commercePro.Controllers.user
         [HttpPost]
         public IActionResult ChangePassword(E_commercePro.ViewModel.ChangePasswordViewModel pass, string CurrebtPassword)
         {
+            if(pass.CurrebtPassword == pass.NewPassword)
+            {
+                ModelState.AddModelError("currebtpassword", "The New password cannot exactly match the  current password.");
+            }
+
             if (ModelState.IsValid)
             {
                 var userId = HttpContext.Session.GetString("UserId");

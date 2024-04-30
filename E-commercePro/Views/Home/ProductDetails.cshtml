@@ -68,7 +68,7 @@
                         
                         <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@Model.Product.Id" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
                         <ul>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                            @* <li><a asp-controller="Home" asp-action="AddToWishlist" asp-route-id="@Model.Product.Id"><span class="icon_heart_alt"></span></a></li> *@
                             <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
                         </ul>
                     </div>

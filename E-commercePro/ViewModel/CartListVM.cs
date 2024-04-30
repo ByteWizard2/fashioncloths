@@ -10,5 +10,6 @@ namespace E_commercePro.ViewModel
         public IEnumerable<CouponsList> coupon { get; set; }
         public decimal TotalPrice { get; set; }
         public decimal Subtotal { get; internal set; }
+
     }
 }

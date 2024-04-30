@@ -60,6 +60,7 @@ namespace E_commercePro.Controllers.user
                         }
 
                         await _db.SaveChangesAsync(); // Save changes to the cart only
+                        TempData["success"] = "Product is added cart successfully";
 
                         return RedirectToAction("ProductDetails", "Home", new { id = productId });
                     }
@@ -180,11 +181,14 @@ namespace E_commercePro.Controllers.user
            
             var coupon = _db.Coupons.FirstOrDefault(c => c.Code == couponCode);
 
-            HttpContext.Session.SetString("cpcode", couponCode);
+        
 
 
             if (coupon != null)
+
             {
+
+                HttpContext.Session.SetString("cpcode", couponCode);
                 // Calculate the subtotal of the user's cart
                 var userId = HttpContext.Session.GetString("UserId");
                 var user = _db.Sign_Up.FirstOrDefault(u => u.ID == Convert.ToInt32(userId));

@@ -78,7 +78,7 @@
 
                                 <hr class="my-5" />
                                 <div class="row" style="max-width: 920px">
-                                    <div class="col-md">
+                                    <div class="col-8">
                                         <article class="box mb-3 bg-light">
                                             <a asp-controller="UserProfile" asp-action="ChangePassword" class="btn float-end btn-light btn-sm rounded font-md" >Change</a>
                                             <h6>Password</h6>
@@ -86,13 +86,7 @@
                                         </article>
                                     </div>
                                     <!-- col.// -->
-                                    <div class="col-md">
-                                        <article class="box mb-3 bg-light">
-                                            <a onclick="return confirm('Are you sure you want to deactivate? This action cannot be undone.')" class="btn float-end btn-light rounded btn-sm font-md" href="/api/v1/users/delete-user/{{user._id}}">Deactivate</a>
-                                            <h6>Remove account</h6>
-                                            <small class="text-muted d-block" style="width: 70%">Once you delete your account, there is no going back.</small>
-                                        </article>
-                                    </div>
+                                   
                                     <!-- col.// -->
                                 </div>
                                 <!-- row.// -->
