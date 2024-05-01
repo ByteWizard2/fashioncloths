@@ -127,7 +127,7 @@ namespace E_commercePro.Controllers.user
                     await _db.SaveChangesAsync();
                 }
             }
-
+            TempData["success"] = "Product removed successfully";
             // You can return JSON or any other response as needed
             return Ok();
         }
@@ -194,24 +194,29 @@ namespace E_commercePro.Controllers.user
                 var user = _db.Sign_Up.FirstOrDefault(u => u.ID == Convert.ToInt32(userId));
                 var cartItems = _db.Carts.Include(u => u.Product).Where(u => u.UserId == user.ID).ToList();
                 decimal subtotal = cartItems.Sum(item => item.Quantity * (decimal)item.Product.Price);
+        
 
-                
                 if (subtotal >= coupon.Minamount)
                 {
-                
-                    return Json(new { success = true, discount = coupon.Discount });
+
+                    return Json(new { success = true, discount = coupon.Discount, message="Coupon added successfully" });
                 }
                 else
                 {
-                  
+
+                
                     return Json(new { success = false, message = "Your total amount is not enough to avail this coupon." });
+                   
+
                 }
             }
             else
             {
-                
+
+              
                 return Json(new { success = false, message = "Invalid coupon code." });
             }
+
         }
 
         [HttpPost]
@@ -225,7 +230,8 @@ namespace E_commercePro.Controllers.user
                 // Remove the applied coupon from the user's session
                 HttpContext.Session.Remove("cpcode" + userId);
 
-                return Json(new { success = true });
+               
+                return Json(new { success = true, message = "Your Coupon removed successfully" });
             }
             catch (Exception ex)
             {

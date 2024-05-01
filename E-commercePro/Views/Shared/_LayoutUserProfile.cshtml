@@ -43,6 +43,8 @@
     <link rel="stylesheet" href="~/Adassets/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="~/Adassets/css/style.css" type="text/css">
 
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+
 
   
 </head>
@@ -150,6 +152,8 @@
     <div class="">
         <main role="main" class="pb-3">
             @RenderBody()
+
+            <partial name="_Notification" />
         </main>
     </div>
 

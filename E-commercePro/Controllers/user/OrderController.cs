@@ -97,6 +97,7 @@ namespace E_commercePro.Controllers.user
                 _db.Addresses.Add(add);
                 await _db.SaveChangesAsync();
 
+                TempData["success"] = " Address Added successfully";
                 return RedirectToAction("OrderView");
             }
 
@@ -141,6 +142,8 @@ namespace E_commercePro.Controllers.user
                         .Include(c => c.Product)
                         .ToListAsync()).Sum(c => c.Quantity * c.Product.Price)
                     };
+
+                   
                     return View("OrderView", orderViewModel);
                 }
 
@@ -279,6 +282,8 @@ namespace E_commercePro.Controllers.user
                         _db.Transactions.Add(withdrawalTransactions);
 
                         await _db.SaveChangesAsync();
+
+                        TempData["error"] = "You don't have insufficient balance in your wallet Please add amount in you wallet";
                         return RedirectToAction("OrderView");
                     }
 
@@ -358,7 +363,7 @@ namespace E_commercePro.Controllers.user
                         .ToListAsync()).Sum(c => c.Quantity * c.Product.Price)
                     };
 
-                    TempData["faild"] = "Cash on Deloivery only availabale in belove 1000 ";
+                    TempData["error"] = "Cash on Delivery only availabale in belove 1000 ";
                     TempData.Keep();
                     return View("OrderView", orderViewModel);
                   
@@ -411,6 +416,7 @@ namespace E_commercePro.Controllers.user
                 return RedirectToAction("Success");
             }
 
+            TempData["error"] = "Select the address";
             return RedirectToAction("OrderView");
         }
 
@@ -500,6 +506,7 @@ namespace E_commercePro.Controllers.user
 
                 };
 
+                TempData["error"] = "Your Payment is failde";
                 return View("OrderView", orderViewModel);
             }
 
@@ -552,6 +559,8 @@ namespace E_commercePro.Controllers.user
 
             };
 
+
+            TempData["error"] = "Your Payment is failde";
             return View("OrderView", orderViewModele);
         }
 

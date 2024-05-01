@@ -49,7 +49,7 @@
     <main>
         <section class="content-main">
             <div class="content-header justify-content-center ">
-                <div>
+                @* <div>
                     <h2 class="content-title card-title">Checkout</h2>
                     @if (Model.IsWalletPayment)
                     {
@@ -58,13 +58,13 @@
                         </div>
                     }
                    
-                </div>
-                @{
+                </div> *@
+                @* @{
                     if (TempData["faild"] != null)
                     {
                         <div id="notification" class="alert alert-danger">@TempData["faild"]</div>
                     }
-                }
+                } *@
             </div>
             <div class="card">
                 <header style="background-color: #e5aa3b;" class="card-header  text-white">
@@ -275,7 +275,7 @@
                                     <div class="box shadow-sm bg-light mb-2 paymentcard">
                                         <h6 class="mb-15">Razor Pay</h6>
                                         <p>
-                                            <img src="/assets/imgs/card-brands/2.png" class="border" height="20" /> Master Card **** **** 4768 <br />
+                                            <img src="/assets/images/download.png" class="border" height="20" /> Master Card **** **** 4768 <br />
                                             Business name: Grand Market LLC <br />
                                             Phone: +1 (800) 555-154-52
                                         </p>

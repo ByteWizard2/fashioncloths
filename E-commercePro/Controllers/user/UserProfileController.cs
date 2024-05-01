@@ -82,7 +82,7 @@ namespace E_commercePro.Controllers.user
 
                 _db.Sign_Up.Update(gn);
                 _db.SaveChanges();
-                TempData["success"] = "Product Update successfully";
+                TempData["success"] = "Profile Update successfully";
                 return RedirectToAction("Profile");
             }
             return View();
@@ -132,10 +132,11 @@ namespace E_commercePro.Controllers.user
 
                 _db.Addresses.Add(add);
                 await _db.SaveChangesAsync();
-
+                TempData["success"] = "Address added successfully";
                 return RedirectToAction("AddressView");
             }
 
+            TempData["error"] = "Address added failed";
             return View(add);
         }
 
@@ -236,18 +237,21 @@ namespace E_commercePro.Controllers.user
                     user.Password = pass.NewPassword;
                     user.ConformPassword = pass.NewPassword;
                     _db.SaveChanges();
+                    TempData["success"] = "Password Changed succesfully";
                     return RedirectToAction("Profile");
                 }
                 else
                 {
 
                     ModelState.AddModelError(nameof(CurrebtPassword), "Invalid current password");
+                    TempData["error"] = "password chnaged failed";
                     return View(pass);
                 }
 
 
             }
 
+            TempData["error"] = "password chnaged failed";
             return View(pass);
         }
 
@@ -319,6 +323,7 @@ namespace E_commercePro.Controllers.user
                                 });
 
                                 _db.Wallets.Update(wallet);
+                                TempData["success"] = "order cancelled successfully";
                             }
                         }
 
@@ -327,8 +332,10 @@ namespace E_commercePro.Controllers.user
                         _db.Entry(order).State = EntityState.Modified;
                         _db.SaveChanges();
                         transaction.Commit();
+                        TempData["success"] = "order cancelled successfully";
                     }
 
+                    TempData["success"] = "order cancelled successfully";
                     // Redirect back to the order list page
                     return RedirectToAction("OrderList");
                 }
@@ -336,7 +343,7 @@ namespace E_commercePro.Controllers.user
                 {
                     transaction.Rollback();
                     // Handle exception
-                    TempData["ErrorMessage"] = "Failed to cancel order";
+                    TempData["error"] = "Failed to cancel order";
                     return RedirectToAction("OrderList");
                 }
             }
@@ -377,6 +384,7 @@ namespace E_commercePro.Controllers.user
                     });
 
                     _db.Wallets.Update(wallet);
+                    TempData["success"] = "order cancelled successfully";
                 }
             }
 
@@ -384,7 +392,7 @@ namespace E_commercePro.Controllers.user
             order.Status = Enum.OrderStatus.Returned;
             _db.Orders.Update(order);
             await _db.SaveChangesAsync();
-
+            TempData["success"] = "order cancelled successfully";
             return RedirectToAction("OrderList");
         }
 
@@ -549,6 +557,8 @@ namespace E_commercePro.Controllers.user
                     _db.Transactions.Add(transaction);
                     await _db.SaveChangesAsync();
 
+                    TempData["success"] = " Payment successful";
+
                     var newBalance = currentBalance + (int)addAmount;
                     wallet.Balance = newBalance;
                     await _db.SaveChangesAsync();
@@ -562,6 +572,8 @@ namespace E_commercePro.Controllers.user
                         Type = "Deposit",
                         statuss = false // Payment failed
                     };
+
+                    TempData["error"] = "Payment failed";
 
                     _db.Transactions.Add(failedTransaction);
                     await _db.SaveChangesAsync();
@@ -577,6 +589,7 @@ namespace E_commercePro.Controllers.user
                     statuss = false // Payment failed
                 };
 
+                TempData["error"] = "Payment failed";
                 _db.Transactions.Add(failedTransaction);
                 await _db.SaveChangesAsync();
             }
@@ -637,6 +650,7 @@ namespace E_commercePro.Controllers.user
             order.PaymentStatus = PaymentStatus.Paid;
             await _db.SaveChangesAsync();
 
+            TempData["success"] = "Order Placed successfully";
             return RedirectToAction("Success", "Order");
         }
 

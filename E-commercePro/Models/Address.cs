@@ -9,28 +9,26 @@ namespace E_commercePro.Models
         [Key]
         public int AddressId { get; set; }
 
-        [Required]
+     
         public String fillname { get; set; }
 
-        [Required]
+   
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be 10 digits")]
         public string phone { get; set; }
 
-        [Required]
+     
         public String street { get; set; }
 
-        [Required]
+   
         public String locality { get; set; }
 
-        [Required]
+    
         public String district { get; set; }
 
-        [Required]
+     
         public String state { get; set; }
 
 
-        [MaxLength(6)]
-        [Required]
         public int pincode { get; set; }
 
         [ValidateNever]
