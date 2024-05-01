@@ -27,14 +27,8 @@ namespace E_commercePro.Controllers.user
         }
 
         [AllowAnonymous]
-        public IActionResult UserHome()
-        
-        
-        
+        public IActionResult UserHome() 
         {
-
-           
-
             return View();
         }
 
